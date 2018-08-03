@@ -1,0 +1,20 @@
+{
+  "brokers": [
+    "data1:9092",
+    "data2:9092",
+    "data3:9092"
+  ],
+  "zookeepers": [
+    "admin:2181",
+    "name1:2181",
+    "name2:2181"
+  ],
+  "group_id": "mongo-consumer",
+  "topic": "logger-json",
+  "mongodb":{
+      "db":"logger",
+      "coll":"lofka",
+      "user":"logger_write",
+      "passwd":"logger_write"
+  }
+}

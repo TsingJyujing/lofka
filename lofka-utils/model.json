@@ -1,0 +1,141 @@
+{
+  "logger" : "io.mycat.route.impl.DruidMycatRouteStrategy",
+  "timestamp" : "2018-06-29T14:12:22.759Z",
+  "message" : "DruidMycatRouteStrategyError",
+  "app_name" : "cvnavi-offline-mycat",
+  "location" : {
+    "line" : 78,
+    "class" : "io.mycat.route.impl.DruidMycatRouteStrategy",
+    "filename" : "DruidMycatRouteStrategy.java",
+    "method" : "routeNormalSqlWithAST"
+  },
+  "host" : {
+    "ip" : "10.10.11.138",
+    "name" : "10.10.11.138"
+  },
+  "level" : "ERROR",
+  "routers" : [
+    "10.10.11.138"
+  ],
+  "mdc" : {},
+  "throwable" : {
+    "message" : "syntax error, error in :'reboot',expect IDENTIFIER, actual IDENTIFIER reboot",
+    "stack_trace" : [
+      {
+        "line" : 239,
+        "class" : "com.alibaba.druid.sql.parser.SQLParser",
+        "filename" : "SQLParser.java",
+        "method" : "printError"
+      },
+      {
+        "line" : 431,
+        "class" : "com.alibaba.druid.sql.parser.SQLStatementParser",
+        "filename" : "SQLStatementParser.java",
+        "method" : "parseStatementList"
+      },
+      {
+        "line" : 2065,
+        "class" : "com.alibaba.druid.sql.parser.SQLStatementParser",
+        "filename" : "SQLStatementParser.java",
+        "method" : "parseStatement"
+      },
+      {
+        "line" : 75,
+        "class" : "io.mycat.route.impl.DruidMycatRouteStrategy",
+        "filename" : "DruidMycatRouteStrategy.java",
+        "method" : "routeNormalSqlWithAST"
+      },
+      {
+        "line" : 81,
+        "class" : "io.mycat.route.impl.AbstractRouteStrategy",
+        "filename" : "AbstractRouteStrategy.java",
+        "method" : "route"
+      },
+      {
+        "line" : 133,
+        "class" : "io.mycat.route.RouteService",
+        "filename" : "RouteService.java",
+        "method" : "route"
+      },
+      {
+        "line" : 276,
+        "class" : "io.mycat.server.ServerConnection",
+        "filename" : "ServerConnection.java",
+        "method" : "routeEndExecuteSQL"
+      },
+      {
+        "line" : 222,
+        "class" : "io.mycat.server.ServerConnection",
+        "filename" : "ServerConnection.java",
+        "method" : "execute"
+      },
+      {
+        "line" : 136,
+        "class" : "io.mycat.server.ServerQueryHandler",
+        "filename" : "ServerQueryHandler.java",
+        "method" : "query"
+      },
+      {
+        "line" : 317,
+        "class" : "io.mycat.net.FrontendConnection",
+        "filename" : "FrontendConnection.java",
+        "method" : "query"
+      },
+      {
+        "line" : 337,
+        "class" : "io.mycat.net.FrontendConnection",
+        "filename" : "FrontendConnection.java",
+        "method" : "query"
+      },
+      {
+        "line" : 71,
+        "class" : "io.mycat.net.handler.FrontendCommandHandler",
+        "filename" : "FrontendCommandHandler.java",
+        "method" : "handle"
+      },
+      {
+        "line" : 478,
+        "class" : "io.mycat.net.FrontendConnection",
+        "filename" : "FrontendConnection.java",
+        "method" : "rawHandle"
+      },
+      {
+        "line" : 460,
+        "class" : "io.mycat.net.FrontendConnection",
+        "filename" : "FrontendConnection.java",
+        "method" : "handle"
+      },
+      {
+        "line" : 321,
+        "class" : "io.mycat.net.AbstractConnection",
+        "filename" : "AbstractConnection.java",
+        "method" : "onReadData"
+      },
+      {
+        "line" : 201,
+        "class" : "io.mycat.net.NIOSocketWR",
+        "filename" : "NIOSocketWR.java",
+        "method" : "asynRead"
+      },
+      {
+        "line" : 273,
+        "class" : "io.mycat.net.AbstractConnection",
+        "filename" : "AbstractConnection.java",
+        "method" : "asynRead"
+      },
+      {
+        "line" : 102,
+        "class" : "io.mycat.net.NIOReactor$RW",
+        "filename" : "NIOReactor.java",
+        "method" : "run"
+      },
+      {
+        "line" : 748,
+        "class" : "java.lang.Thread",
+        "filename" : "Thread.java",
+        "method" : "run"
+      }
+    ]
+  },
+  "thread" : "$_NIOREACTOR-1-RW"
+}

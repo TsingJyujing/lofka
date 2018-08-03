@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{5} - %msg%n"/>
+        </Console>
+        <LofkaAsyncHttp
+                name="HttpAppender"
+                target="http://127.0.0.1:9500/"
+                applicationName="lofka_test/log4j2/async_http"
+                interval="100"
+                maxBufferSize="100"
+        ></LofkaAsyncHttp>
+
+    </appenders>
+
+    <loggers>
+        <root level="debug">
+            <appenderRef ref="Console"/>
+            <appenderRef ref="HttpAppender"/>
+        </root>
+    </loggers>
+
+</configuration>

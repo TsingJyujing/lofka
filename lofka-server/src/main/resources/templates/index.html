@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lofka日志服务器</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="icon" type="image/x-icon" href="/img/icon.png">
+</head>
+<body>
+<h1>Lofka</h1>
+<img src="/img/icon.png"/>
+<!--/*@thymesVar id="systemApplicationName" type="String"*/-->
+<p th:text="'日志服务前缀名称: '+${systemApplicationName}"></p>
+<p>
+    更多信息参考：
+    <a href="https://github.com/TsingJyujing/lofka/wiki">参考文档</a>
+</p>
+</body>
+</html>

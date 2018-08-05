@@ -1,13 +1,13 @@
 package com.github.tsingjyujing.lofka.server.controller;
 
-import com.cvnavi.lofka.basic.LoggerJson;
+import com.github.tsingjyujing.lofka.basic.LoggerJson;
 import com.github.tsingjyujing.lofka.server.queue.MessageQueueCluster;
 import com.github.tsingjyujing.lofka.server.socket.LoggerSocketServerCluster;
 import com.github.tsingjyujing.lofka.server.util.Constants;
 import com.github.tsingjyujing.lofka.server.util.LofkaConfigUtil;
 import com.github.tsingjyujing.lofka.server.util.SocketServerUtil;
 import com.github.tsingjyujing.lofka.server.websocket.LoggerPushWebSocket;
-import com.cvnavi.lofka.util.CompressUtil;
+import com.github.tsingjyujing.lofka.util.CompressUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

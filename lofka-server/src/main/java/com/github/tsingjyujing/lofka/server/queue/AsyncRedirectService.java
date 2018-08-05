@@ -1,8 +1,8 @@
 package com.github.tsingjyujing.lofka.server.queue;
 
-import com.cvnavi.lofka.basic.BaseAsyncProcessor;
-import com.cvnavi.lofka.basic.LoggerJsonAsyncAutoProcessor;
-import com.cvnavi.lofka.util.Constants;
+import com.github.tsingjyujing.lofka.basic.BaseAsyncProcessor;
+import com.github.tsingjyujing.lofka.basic.LoggerJsonAsyncAutoProcessor;
+import com.github.tsingjyujing.lofka.util.Constants;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

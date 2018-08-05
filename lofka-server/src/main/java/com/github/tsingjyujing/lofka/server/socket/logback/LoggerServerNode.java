@@ -2,9 +2,9 @@ package com.github.tsingjyujing.lofka.server.socket.logback;
 
 import ch.qos.logback.classic.net.server.HardenedLoggingEventInputStream;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.cvnavi.lofka.appender.logback.LoggingEventToJson;
-import com.cvnavi.lofka.basic.IJsonConvert;
-import com.cvnavi.lofka.basic.LoggerJson;
+import com.github.tsingjyujing.lofka.appender.logback.LoggingEventToJson;
+import com.github.tsingjyujing.lofka.basic.IJsonConvert;
+import com.github.tsingjyujing.lofka.basic.LoggerJson;
 import com.github.tsingjyujing.lofka.server.queue.IMessageQueue;
 import com.github.tsingjyujing.lofka.server.queue.MessageQueueCluster;
 import com.github.tsingjyujing.lofka.server.util.SocketServerUtil;

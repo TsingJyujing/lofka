@@ -1,8 +1,8 @@
 package com.github.tsingjyujing.lofka.server.socket.log4j;
 
-import com.cvnavi.lofka.appender.log4j.LoggingEventToJson;
-import com.cvnavi.lofka.basic.IJsonConvert;
-import com.cvnavi.lofka.basic.LoggerJson;
+import com.github.tsingjyujing.lofka.appender.log4j.LoggingEventToJson;
+import com.github.tsingjyujing.lofka.basic.IJsonConvert;
+import com.github.tsingjyujing.lofka.basic.LoggerJson;
 import com.github.tsingjyujing.lofka.server.queue.IMessageQueue;
 import com.github.tsingjyujing.lofka.server.queue.MessageQueueCluster;
 import com.github.tsingjyujing.lofka.server.util.SocketServerUtil;

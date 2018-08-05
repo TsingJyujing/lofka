@@ -11,6 +11,7 @@ import java.net.Socket;
  *
  * @author yuanyifan@cvnavi.com
  */
+@Deprecated
 public class LoggerServer extends CommonLoggerServer {
 
     /**

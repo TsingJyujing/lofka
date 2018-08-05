@@ -123,7 +123,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cvnavi</groupId>
+            <groupId>com.github.tsingjyujing</groupId>
             <artifactId>lofka-utils</artifactId>
             <version>${project.version}</version>
         </dependency>

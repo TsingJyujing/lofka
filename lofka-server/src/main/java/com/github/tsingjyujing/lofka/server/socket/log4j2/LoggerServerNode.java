@@ -1,6 +1,6 @@
 package com.github.tsingjyujing.lofka.server.socket.log4j2;
 
-import com.cvnavi.lofka.basic.LoggerJson;
+import com.github.tsingjyujing.lofka.basic.LoggerJson;
 import com.github.tsingjyujing.lofka.server.queue.IMessageQueue;
 import com.github.tsingjyujing.lofka.server.queue.MessageQueueCluster;
 import com.github.tsingjyujing.lofka.server.util.SocketServerUtil;
@@ -20,6 +20,7 @@ import java.net.Socket;
  *
  * @author yuanyifan
  */
+@Deprecated
 public class LoggerServerNode implements Runnable {
     private final IMessageQueue messageQueueCluster = MessageQueueCluster.getInstance();
     private final Socket socket;

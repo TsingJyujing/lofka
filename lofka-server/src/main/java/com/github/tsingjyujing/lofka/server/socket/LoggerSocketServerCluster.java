@@ -1,6 +1,5 @@
 package com.github.tsingjyujing.lofka.server.socket;
 
-import com.github.tsingjyujing.lofka.server.socket.log4j2.LoggerServer;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.bson.Document;
@@ -35,10 +34,10 @@ public class LoggerSocketServerCluster {
 
     /**
      * 所有需要启动的Socket服务器都添加到这里
+     * 目前不再启动Log4j2的Socket服务器
      */
     private final List<? extends LoggerSocketServer> socketServers = Lists.newArrayList(
             new com.github.tsingjyujing.lofka.server.socket.log4j.LoggerServer(9501),
-            new LoggerServer(9502),
             new com.github.tsingjyujing.lofka.server.socket.logback.LoggerServer(9503)
     );
 

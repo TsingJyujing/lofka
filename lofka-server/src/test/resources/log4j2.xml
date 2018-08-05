@@ -10,7 +10,7 @@
                 applicationName="lofka_test/log4j2/async_http"
                 interval="100"
                 maxBufferSize="100"
-        ></LofkaAsyncHttp>
+        />
 
     </appenders>
 

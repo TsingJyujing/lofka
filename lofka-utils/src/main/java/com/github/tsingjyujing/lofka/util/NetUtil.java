@@ -29,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
  * 网络工具
  * 用于HTTP的接收和发送，返回校验，连接管理等操作
  * <p>
- * TODO: 压缩和解压缩
  *
  * @author yuanyifan
  */

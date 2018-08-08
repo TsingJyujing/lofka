@@ -137,3 +137,8 @@ server {
     }
 }
 ```
+
+## 持久化到MongoDB
+参考文件夹`lofka-mongo-writer`中的内容，修改`lofka-mongo-writer/kafka-config.json`为你的环境的配置。
+随后直接启动脚本：`python3 mongodb_writer.py`
+即可完成入库到MongoDB的服务

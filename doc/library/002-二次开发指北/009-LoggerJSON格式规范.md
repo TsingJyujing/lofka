@@ -21,7 +21,8 @@
 |app_name|String|应用名称|否|如果不存在，给定一个默认的app_name|"TestService"|
 |throwable|Object|异常信息|否|无|参见异常部分|
 |type|String|日志类型|否|保存时强制大写|一般标明日志的类型，如NGINX标明是"type"："NGINX"，这一字段在MONGO中做偏索引使用。|
-
+|location|Object|日志产生所在的位置|否|无|参见日志位置部分|
+|其它可扩展字段。。。|-|-|-|-|-|
 
 ### 应用名称（`app_name`字段）规范
 `app_name`遵循类似文件夹层级的命名方式，唯一有区别的是生成的路径是反向的。
@@ -54,6 +55,16 @@
 
 需要说明的是，主机信息最多允许16层，超过16层的日志会被直接废弃（说明有可能是产生了自激震荡），这个时候相关信息会输出到日志服务器的控制台。
 
+### 日志位置
+日志位置样例如下：
+```js
+{
+    "method": "refresh",
+    "line": 106,
+    "filename": "ZkCoordinator.java",
+    "class": "org.apache.storm.kafka.ZkCoordinator"
+}
+```
 
 ### 异常
 一般的异常信息格式如下，其中的字段我相信不需要解释了，还需要在下解释的话自己退群吧。

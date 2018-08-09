@@ -1,13 +1,23 @@
 #!/usr/bin/python
 # coding=utf-8
+"""
+Lofka Tail
 
+Monitor each line of an text file on the tail.
+
+
+"""
 import os
+
 import abc
 import sys
 import time
 import json
 import datetime
 import traceback
+
+from os import stat
+from stat import ST_SIZE
 
 try:
     from urllib import unquote
@@ -16,27 +26,28 @@ except:
 import requests
 
 banner = """
- _              __  _            _____       _  _ 
+ _              __  _            _____       _  _
 | |            / _|| |          |_   _|     (_)| |
 | |      ___  | |_ | | __ __ _    | |  __ _  _ | |
 | |     / _ \ |  _|| |/ // _` |   | | / _` || || |
 | |____| (_) || |  |   <| (_| |   | || (_| || || |
 \_____/ \___/ |_|  |_|\_\\\\__,_|   \_/ \__,_||_||_|
-                                                  
+
 """
 
 help_doc = """----------LOFKA TAIL FILE READER----------
 options    type     usage                          default
 --file     string   which file to monitor          [no default]
---target   string   url of logger server           http://logger.cvtsp.com/
+--target   string   url of logger server           [no default]
 --period   float    the period to scan the file    1.0
 --type     list[]   which processors will be used  common
 --app_name string   application name               lofka_tail
 --append   string   a json file name to read       [no default]
+------------------------------------------
 """
 
 
-class Tail(object):
+class Tail:
     """
     Represents a tail command.
     """
@@ -51,25 +62,32 @@ class Tail(object):
         self.tailed_file = tailed_file
         self.callback = sys.stdout.write
 
-    def follow(self, s=1.0):
+    def follow(self, delay_period=1.0):
         """
         Do a tail follow. If a callback function is registered it is called with every new line.
         Else printed to standard out.
-        :param s: Number of seconds to wait between each iteration; Defaults to 1.
+        :param delay_period: Number of seconds to wait between each iteration; Defaults to 1.
         :return:
         """
-
-        with open(self.tailed_file) as file_:
-            # Go to the end of file
-            file_.seek(0, 2)
-            while True:
-                curr_position = file_.tell()
-                line = file_.readline()
-                if not line:
-                    file_.seek(curr_position)
-                    time.sleep(s)
+        file_ = open(self.tailed_file)
+        file_.seek(0, 2)
+        while True:
+            curr_position = file_.tell()
+            line = file_.readline()
+            if not line:
+                if stat(self.tailed_file)[ST_SIZE] < curr_position:
+                    # Reopen file while file truncated
+                    file_.close()
+                    file_ = open(self.tailed_file, "r")
                 else:
+                    time.sleep(delay_period)
+                    file_.seek(curr_position)
+            else:
+                try:
                     self.callback(line)
+                except:
+                    print("Error while executing callback function:")
+                    print(traceback.format_exc())
 
     def register_callback(self, func):
         """
@@ -91,7 +109,7 @@ class Tail(object):
         if not os.access(file_, os.R_OK):
             raise TailError("File '%s' not readable" % file_)
         if os.path.isdir(file_):
-            raise TailError("File '%s' is a directory" % file_)
+            raise TailError("File '%s' is a fucking directory" % file_)
 
 
 class TailError(Exception):
@@ -300,8 +318,10 @@ def report_log(target, record_object):
     :param record_object: object which jsonizable
     :return:
     """
-    url = target + "lofka/service/push"
-    return requests.post(url, data=json.dumps(record_object).encode())
+    return requests.post(
+        os.path.join(target, "lofka/service/push"),
+        data=json.dumps(record_object).encode()
+    )
 
 
 def message_filter_function(data):
@@ -319,7 +339,7 @@ def message_filter_function(data):
 
 def main():
     arg_map = ArgumentsMap(sys.argv)
-    report_address = arg_map.query_default("target", "http://logger.cvtsp.com/")
+    report_address = arg_map.query("target")
     file_name = arg_map.query("file")
     delta_time = float(arg_map.query_default("period", "1.0"))
     expired_delta_mills = float(arg_map.query_default("expired", "180.0")) * 24 * 60 * 60 * 1000

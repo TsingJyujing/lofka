@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="lofka",
-    version="1.5",
+    version="1.7",
     packages=find_packages(),
     install_requires=[
         "requests"

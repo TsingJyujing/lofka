@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 import sys
 import datetime
+import time
 import traceback
 from config import *
 from console_util import *
-from websocket import create_connection
+from websocket import create_connection, WebSocketConnectionClosedException
 
 
 def format_datetime(timestamp_info: object) -> str:
@@ -153,6 +154,10 @@ def main():
                         print_message(log_data)
                     else:
                         print(json_util.dumps(log_data, indent=2))
+            except WebSocketConnectionClosedException as wsc_ex:
+                print("Web socket closed, reconnecting...")
+                time.sleep(1.0)
+                ws = create_connection(ws_address)
             except Exception as message_ex:
                 print("Error while processing message:\n" + message_formatter_raw(log_data), file=sys.stderr)
                 print(str(message_ex), file=sys.stderr)

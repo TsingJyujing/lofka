@@ -102,7 +102,7 @@ class LofkaHandler(Handler):
     Log handler which sending
     """
 
-    def __init__(self, target_url="http://logger.example.com/", app_name="default_python_application"):
+    def __init__(self, target_url, app_name="default_python_application"):
         super(LofkaHandler, self).__init__()
         try:
             with open("lofka.json", "r") as fp:
@@ -132,7 +132,7 @@ class LofkaAsyncHandler(Handler):
     """
 
     def __init__(self,
-                 target_url="http://logger.example.com/",
+                 target_url,
                  app_name="default_python_application",
                  interval=1000,
                  max_buffer_size=1000
@@ -143,6 +143,8 @@ class LofkaAsyncHandler(Handler):
                 obj = json.load(fp)
                 target_url = obj['target_url']
                 app_name = obj['app_name']
+                interval = int(obj['interval'])
+                max_buffer_size = int(obj['max_buffer_size'])
         except:
             pass
         self.target_url = target_url + "lofka/service/push/batch"
@@ -154,10 +156,8 @@ class LofkaAsyncHandler(Handler):
         def push_data_periodically():
             while True:
                 if self.message_queue.qsize() > 0:
-                    print("Pushing:\n" + json.dumps(list(self.message_queue.queue), indent=2))
                     self.__submit_batch(list(self.message_queue.queue))
                     self.message_queue.queue.clear()
-                    print("Pushed")
                 else:
                     time.sleep(interval / 1000.0)
 

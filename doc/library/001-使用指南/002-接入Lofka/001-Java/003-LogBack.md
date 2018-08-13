@@ -4,6 +4,7 @@
 你可以引入我的第三方库：
 
 ```xml
+<!--请保证项目的Java版本大于等于7-->
 <dependency>
     <groupId>com.github.tsingjyujing</groupId>
     <artifactId>lofka-utils</artifactId>

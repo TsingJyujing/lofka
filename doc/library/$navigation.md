@@ -5,9 +5,11 @@
 - [配置Lofka服务器](?file=001-使用指南/001-配置Lofka服务器 "配置Lofka服务器")
 - **接入Lofka**
     - **Java**
+        - [Java接入概述](?file=001-使用指南/002-接入Lofka/001-Java/000-Java接入概述 "Java接入概述")
         - [Log4j](?file=001-使用指南/002-接入Lofka/001-Java/001-Log4j "Log4j")
         - [Log4j2](?file=001-使用指南/002-接入Lofka/001-Java/002-Log4j2 "Log4j2")
         - [LogBack](?file=001-使用指南/002-接入Lofka/001-Java/003-LogBack "LogBack")
+        - [心跳包](?file=001-使用指南/002-接入Lofka/001-Java/009-心跳包 "心跳包")
     - [Python](?file=001-使用指南/002-接入Lofka/002-Python "Python")
     - [文本日志回收系统](?file=001-使用指南/002-接入Lofka/009-文本日志回收系统 "文本日志回收系统")
 - [如何查看实时日志](?file=001-使用指南/003-如何查看实时日志 "如何查看实时日志")

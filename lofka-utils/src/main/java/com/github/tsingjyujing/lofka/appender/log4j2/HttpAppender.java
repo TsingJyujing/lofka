@@ -2,6 +2,7 @@ package com.github.tsingjyujing.lofka.appender.log4j2;
 
 import static com.github.tsingjyujing.lofka.util.NetUtil.retryPost;
 
+import com.github.tsingjyujing.lofka.util.Constants;
 import com.github.tsingjyujing.lofka.util.NetUtil;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -36,7 +37,12 @@ public class HttpAppender extends AbstractAppender {
 
     protected HttpAppender(String name, String target, String applicationName) {
         super(name, null, null, true);
-        setTarget(target);
+        setTarget(
+                Constants.urlProcessing(
+                        target,
+                        Constants.INTERFACE_PUSH_SINGLE
+                )
+        );
         setApplicationName(applicationName);
     }
 

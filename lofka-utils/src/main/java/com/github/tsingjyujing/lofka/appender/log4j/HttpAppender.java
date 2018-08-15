@@ -1,6 +1,7 @@
 package com.github.tsingjyujing.lofka.appender.log4j;
 
 import com.github.tsingjyujing.lofka.basic.IJsonConvert;
+import com.github.tsingjyujing.lofka.util.Constants;
 import com.github.tsingjyujing.lofka.util.NetUtil;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
@@ -43,6 +44,7 @@ public class HttpAppender extends AppenderSkeleton {
         );
     }
 
+
     /**
      * Subclasses of <code>AppenderSkeleton</code> should implement this
      * method to perform actual logging. See also {@link #doAppend
@@ -60,7 +62,10 @@ public class HttpAppender extends AppenderSkeleton {
             if (application != null) {
                 doc.append("app_name", application);
             }
-            NetUtil.verifyResponse(NetUtil.retryPost(target, doc.toJson()));
+            NetUtil.verifyResponse(NetUtil.retryPost(Constants.urlProcessing(
+                    getTarget(),
+                    Constants.INTERFACE_PUSH_SINGLE
+            ), doc.toJson()));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

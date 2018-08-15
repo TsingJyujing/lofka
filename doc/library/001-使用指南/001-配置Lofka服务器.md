@@ -1,27 +1,32 @@
 # 配置一台Lofka服务器
 
-如果要统一收集日志，首先要有一台日志服务器。
+如果要统一收集日志，首先要有一台日志服务器。Lofka服务器主要主要承担从各个源头收集日志，并且将日志统一推送到指定的消息队列（或者转发）的职责。
+
+需要注意的是，Lofka服务器不负责将消息队列中的日志持久化到某一个数据库中。
 
 ## Lofka服务器构成
+
 一台Lofka服务器由下列服务组成
 
-- Http日志服务器（默认端口9500）
-    - 单个文档推送接口（压缩/不压缩）
-    - 多个文档推送接口（压缩/不压缩）
-    - Websocket日志推流
+- Http服务（默认端口9500）
+    - 单个文档推送接口（压缩/不压缩）（客户端提交到服务器）
+    - 多个文档推送接口（压缩/不压缩）（客户端提交到服务器）
+    - Websocket日志推流（服务器推送到客户端）
     - 首页、监控、其他接口
-- Socket服务器推送接口
-    - Log4j 1.x SocketServer
-    - LogBack SocketServer
-    - ~~Log4j 2.x SocketServer~~
+- Socket服务器推送接口（客户端提交到服务器）
+    - Log4j 1.x SocketServer（默认端口9501）
+    - LogBack SocketServer（默认端口9503）
+    - ~~Log4j 2.x SocketServer（默认端口9502）~~
 
-## 启动服务器
+## 构建自己的Lofka服务器
+
+
 
 ### 编译服务器
 
-需要Java8。
+服务器使用Java写成，编译服务器需要Java8。
 
-[直接下载Lofka服务端](http://file.lovezhangbei.top/lofka/lofka-server-1.6.jar)
+[不想编译的懒汉请直接下载Lofka服务端](http://file.lovezhangbei.top/lofka/lofka-server-1.6.jar)
 
 首先使用如下指令编译服务器：
 ```bash
@@ -34,14 +39,13 @@ mvn clean package -pl lofka-server -am
 
 将项目中conf目录下的文件拷贝到和jar包统一目录进行编辑：
 
-
 #### 参数配置
 一般的参数都通过`lofka.properties`进行配置：
 
 - 应用名称配置 ：`lofka.application`，如果不需要就空着或者不写这一项配置
 
 如果配置有名称，那么系统在收到日志的时候自动会缀上名称。
-例如：服务名称叫`test`,app_name字段叫`nginx`，那么会自动变为`test/nginx`。
+例如：Lofka服务器配置的应用名称叫`test`,app_name字段叫`nginx`，那么收到日志以后，服务器会将app_name字段自动变为`test/nginx`。
 
 #### Queue配置
 通过修改配置文件，即可控制Lofka服务器在收到日志之后的行为。

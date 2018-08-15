@@ -5,6 +5,8 @@
 
 .idea
 *.iml
+venv
+
 
 # User-specific stuff
 .idea/**/workspace.xml

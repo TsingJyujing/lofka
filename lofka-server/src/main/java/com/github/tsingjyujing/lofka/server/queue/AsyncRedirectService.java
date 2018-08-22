@@ -27,6 +27,9 @@ public class AsyncRedirectService implements IMessageQueue {
      * @param redirectTarget 重定向目标
      */
     public AsyncRedirectService(String redirectTarget) {
+        if("".equals(redirectTarget)){
+            throw new RuntimeException("Redirect target should not be empty string.");
+        }
         loggerJsonAsyncProcessor = new LoggerJsonAsyncAutoProcessor(
                 Constants.urlProcessing(
                         redirectTarget,

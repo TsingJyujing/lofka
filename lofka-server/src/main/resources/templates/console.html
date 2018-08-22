@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lofka Console</title>
+    <link rel="icon" type="image/x-icon" href="/img/icon.png">
+    <link rel="stylesheet" href="/js/node_modules/xterm/dist/xterm.css"/>
+    <script src="/js/node_modules/xterm/dist/xterm.js"></script>
+    <script src="/js/lofka/console.js"></script>
+</head>
+<body>
+    <div id="terminal"></div>
+    <script>
+        const term = new Terminal();
+        const ws = new WebSocket('ws://127.0.0.1:9500/lofka/websocket/logs');
+
+        term.open(document.getElementById('terminal'));
+
+        ws.onopen = function(evt) {
+            term.write("Connection established.\n");
+            console.log(evt);
+            ws.send("function filter(log) {return true;}");
+        };
+
+        ws.onmessage = function(event) {
+            const console_print = auto_format_message(
+                JSON.parse(
+                    event.data
+                )
+            );
+            term.write(
+                console_print
+            );
+            term.write("\n");
+        };
+
+        window.onbeforeunload = function (e) {
+            ws.close()
+        };
+
+    </script>
+</body>
+</html>

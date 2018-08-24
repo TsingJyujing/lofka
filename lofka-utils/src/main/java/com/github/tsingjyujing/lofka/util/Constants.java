@@ -9,21 +9,25 @@ public class Constants {
     public static final String INTERFACE_PUSH_SINGLE_ZIP = "lofka/service/push/zip";
     public static final String INTERFACE_PUSH_BATCH_ZIP = "lofka/service/push/batch/zip";
 
-    public static final String PROTOCAL = "http://";
+    public static final String PROTOCOL = "http://";
+    public static final String SLASH = "/";
 
     /**
      * Auto repair URL settings
-     *
-     * @param urlSetting
+     * @param urlSetting URL 配置
+     * @param apiRoute API路由
      * @return
      */
     public static String urlProcessing(String urlSetting, String apiRoute) {
-        if (!urlSetting.startsWith(PROTOCAL)) {
-            urlSetting = PROTOCAL + urlSetting;
+        if (urlSetting==null || "".equals(urlSetting)){
+            throw new RuntimeException("Lofka URL setting can't be null or empty string");
         }
-        if (!urlSetting.endsWith("/" + apiRoute)) {
-            if (!urlSetting.endsWith("/")) {
-                urlSetting += "/";
+        if (!urlSetting.startsWith(PROTOCOL)) {
+            urlSetting = PROTOCOL + urlSetting;
+        }
+        if (!urlSetting.endsWith(SLASH + apiRoute)) {
+            if (!urlSetting.endsWith(SLASH)) {
+                urlSetting += SLASH;
             }
             urlSetting += apiRoute;
         }

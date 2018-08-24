@@ -3,7 +3,6 @@ package com.github.tsingjyujing.lofka.basic;
 
 import com.google.common.collect.Lists;
 
-import java.security.InvalidParameterException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 异步数据处理器
- *
+ * <p>
  * 支持时间触发和条数触发模式，满足任一触发条件即启动处理程序
  *
  * @param <DataType>
@@ -41,7 +40,7 @@ public abstract class BaseAsyncProcessor<DataType> {
     private final AtomicInteger maxBufferSize = new AtomicInteger(1000);
 
     public void setMaxBufferSize(int size) {
-        if(size>0){
+        if (size > 0) {
             maxBufferSize.set(size);
         }
     }
@@ -70,6 +69,7 @@ public abstract class BaseAsyncProcessor<DataType> {
 
     private final BufferMonitor monitor = new BufferMonitor();
 
+    @SuppressWarnings("AlibabaAvoidManuallyCreateThread")
     public BaseAsyncProcessor() {
         new Thread(monitor).start();
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {

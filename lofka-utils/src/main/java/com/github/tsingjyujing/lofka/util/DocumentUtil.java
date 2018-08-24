@@ -2,6 +2,8 @@ package com.github.tsingjyujing.lofka.util;
 
 import com.github.tsingjyujing.lofka.basic.LoggerJson;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import org.bson.Document;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
  * @author yuanyifan
  */
 public class DocumentUtil {
+    private final static Gson GSON = new Gson();
 
     /**
      * 格式化错误调试堆栈信息
@@ -68,6 +71,19 @@ public class DocumentUtil {
             doc.append(LoggerJson.TAG_THROWABLES_STACK_TRACE, stackTraceInfo);
         }
         return doc;
+    }
+
+    /**
+     * 生成心跳包数据
+     *
+     * @return
+     */
+    public static String generateHeartBeatMessage(String name, long interval) {
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("name", name);
+        data.put("interval", interval);
+        data.put("type", "heartbeat");
+        return GSON.toJson(data);
     }
 
 }

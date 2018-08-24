@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author yuanyifan
  */
-@ServerEndpoint(value = Constants.INTERFACE_WEBSOCKET_PUSH)
+@ServerEndpoint(value = "/" + Constants.INTERFACE_WEBSOCKET_PUSH)
 @Component
 public class LoggerPushWebSocket {
 

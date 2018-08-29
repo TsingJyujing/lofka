@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-import sys
 import datetime
+import sys
 import time
 import traceback
+
+from websocket import create_connection, WebSocketConnectionClosedException
+
 from config import *
 from console_util import *
-from websocket import create_connection, WebSocketConnectionClosedException
 
 
 def format_datetime(timestamp_info: object) -> str:
@@ -34,13 +36,28 @@ def message_formatter(log_data: dict) -> str:
     else:
         host_formatted = "Unknown host"
 
+    message = log_data["message"]
+    try:
+        if type(message) == str:
+            msg = json.dumps(
+                json.loads(message),
+                indent=2
+            )
+        else:
+            msg = json.dumps(
+                message,
+                indent=2
+            )
+    except:
+        msg = log_data["message"]
+
     logger_output = "{0} [{1}] [{2}] {3} [{6}://{5}]\t:{4}".format(
-        time_formatted,
+        LofkaColors.white(time_formatted),
         LEVEL_COLOR[log_data["level"]](
             str_size_limit(log_data["level"], limit_ahead=2, limit_after=3, padding=True, shrink_str="-")),
         LofkaColors.purple(str_size_limit(log_data["thread"], limit_ahead=4, limit_after=10, padding=True)),
         LofkaColors.blue(str_size_limit(log_data["logger"], limit_ahead=4, limit_after=10, padding=True)),
-        LofkaColors.cerulean(log_data["message"]),
+        LofkaColors.cerulean(msg),
         LofkaColors.cerulean(host_formatted),
         LofkaColors.yellow(log_data["app_name"])
     )

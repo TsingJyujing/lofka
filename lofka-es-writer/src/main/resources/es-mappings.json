@@ -1,0 +1,33 @@
+
+{
+  "settings" : {
+    "number_of_shards" : 1
+  },
+  "mappings" : {
+    "_default_": {
+      "properties": {
+        "timestamp": {
+          "type": "long"
+        },
+        "write_timestamp": {
+          "type": "long"
+        },
+        "expired_time": {
+          "type": "long"
+        },
+        "app_name": {
+          "type": "keyword"
+        },
+        "host": {
+          "type": "keyword"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "logger": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

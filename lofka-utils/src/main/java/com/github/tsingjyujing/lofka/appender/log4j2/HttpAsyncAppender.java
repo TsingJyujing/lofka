@@ -12,6 +12,9 @@ import org.bson.Document;
 
 import java.util.Map;
 
+/**
+ * Log4J2 的Http异步提交工具
+ */
 @Plugin(name = "LofkaAsyncHttp", category = "Core", elementType = "appender", printObject = true)
 public class HttpAsyncAppender extends AbstractAppender {
 
@@ -27,26 +30,26 @@ public class HttpAsyncAppender extends AbstractAppender {
 
     private String applicationName = "";
 
-    public String getTarget() {
-        return target;
-    }
 
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    private String target = "";
-
+    /**
+     * 初始化Appender
+     *
+     * @param name            Appender名称
+     * @param target          推送目标
+     * @param applicationName 应用名称
+     * @param interval        推送间隔
+     * @param maxBufferSize   最大缓冲区大小
+     */
     protected HttpAsyncAppender(String name, String target, String applicationName, int interval, int maxBufferSize) {
         super(name, null, null, true);
         setApplicationName(applicationName);
         processor = new LoggerJsonAsyncAutoProcessor(
                 Constants.urlProcessing(
-                        getTarget(),
+                        target,
                         Constants.INTERFACE_PUSH_BATCH
                 ),
                 Constants.urlProcessing(
-                        getTarget(),
+                        target,
                         Constants.INTERFACE_PUSH_BATCH_ZIP
                 )
         );
@@ -70,6 +73,16 @@ public class HttpAsyncAppender extends AbstractAppender {
         processor.offerData(doc);
     }
 
+    /**
+     * Appender 插件工厂方法
+     *
+     * @param name            Appender名称
+     * @param target          推送目标
+     * @param applicationName 应用名称
+     * @param interval        推送间隔
+     * @param maxBufferSize   最大缓冲区大小
+     * @return
+     */
     @PluginFactory
     public static HttpAsyncAppender createAppender(
             // @formatter:off
@@ -80,8 +93,11 @@ public class HttpAsyncAppender extends AbstractAppender {
             @PluginAttribute(value = "maxBufferSize", defaultInt = 1000) final int maxBufferSize
     ) {
         return new HttpAsyncAppender(
-                name, target, applicationName,
-                interval, maxBufferSize
+                name,
+                target,
+                applicationName,
+                interval,
+                maxBufferSize
         );
     }
 }

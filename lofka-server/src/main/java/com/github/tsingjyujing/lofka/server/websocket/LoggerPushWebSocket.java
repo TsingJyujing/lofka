@@ -1,6 +1,8 @@
 package com.github.tsingjyujing.lofka.server.websocket;
 
 import com.github.tsingjyujing.lofka.server.util.Constants;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author yuanyifan
  */
-@ServerEndpoint(value = Constants.INTERFACE_WEBSOCKET_PUSH)
+@ServerEndpoint(value = "/" + Constants.INTERFACE_WEBSOCKET_PUSH)
 @Component
 public class LoggerPushWebSocket {
 
@@ -39,6 +42,7 @@ public class LoggerPushWebSocket {
      */
     private Session session;
     private final FilterEngine filterEngine = new FilterEngine();
+    private Gson gson = new Gson();
 
     /**
      * 连接建立成功调用的方法
@@ -74,8 +78,16 @@ public class LoggerPushWebSocket {
     public void onMessage(String message, Session session) throws IOException {
         try {
             filterEngine.setFilter(message);
+            final Map<String,Object> messageOk = Maps.newHashMap();
+            messageOk.put("status",200);
+            messageOk.put("echo",message);
+            forceSendMessage(gson.toJson(messageOk));
             LOGGER.info("Get an message from client {}: \n{}", session.getId(), message);
         } catch (Exception ex) {
+            final Map<String,Object> messageFail = Maps.newHashMap();
+            messageFail.put("status",500);
+            messageFail.put("echo",message);
+            forceSendMessage(gson.toJson(messageFail));
             LOGGER.warn("Error while setting filter:", ex);
         }
     }
@@ -121,8 +133,17 @@ public class LoggerPushWebSocket {
      */
     public void sendMessage(String message) throws IOException {
         if (filterEngine.getFilterResult(message)) {
-            this.session.getBasicRemote().sendText(message);
+            forceSendMessage(message);
         }
+    }
+
+    /**
+     * 强制发送消息
+     * @param message
+     * @throws IOException
+     */
+    public void forceSendMessage(String message) throws IOException {
+        session.getBasicRemote().sendText(message);
         LOGGER.trace("Send an message to client:", session.getId());
     }
 

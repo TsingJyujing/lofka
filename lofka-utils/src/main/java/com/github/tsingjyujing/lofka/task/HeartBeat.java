@@ -1,10 +1,8 @@
 package com.github.tsingjyujing.lofka.task;
 
 import com.github.tsingjyujing.lofka.basic.BaseClosableTimedTask;
-import com.google.common.collect.Maps;
+import com.github.tsingjyujing.lofka.util.DocumentUtil;
 import com.google.gson.Gson;
-
-import java.util.Map;
 
 /**
  * Lofka 心跳机制
@@ -16,7 +14,7 @@ public class HeartBeat extends BaseClosableTimedTask {
 
     @Override
     protected void unitProgram() throws Exception {
-        LOGGER.debug(generateHeartBeatMessage());
+        LOGGER.debug(DocumentUtil.generateHeartBeatMessage(getHeartBeatName(), getSleepInterval()));
     }
 
     @Override
@@ -59,19 +57,6 @@ public class HeartBeat extends BaseClosableTimedTask {
      */
     public HeartBeat(String heartBeatName) {
         this(heartBeatName, 1000);
-    }
-
-    /**
-     * 生成心跳包数据
-     *
-     * @return
-     */
-    private String generateHeartBeatMessage() {
-        Map<String, Object> data = Maps.newHashMap();
-        data.put("name", getHeartBeatName());
-        data.put("interval", getSleepInterval());
-        data.put("type", "heartbeat");
-        return GSON.toJson(data);
     }
 
 

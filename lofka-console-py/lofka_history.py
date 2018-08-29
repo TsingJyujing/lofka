@@ -1,15 +1,17 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 
-import sys
 import datetime
+import os
+import sys
 import traceback
+
+from pymongo import MongoClient
+
 from config import *
 from console_util import *
-from pymongo import MongoClient
-from lofka_console import print_message
 from console_util import message_formatter_raw
-from bson import json_util
+from lofka_console import print_message
 
 DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
@@ -40,8 +42,11 @@ def generate_message_filter(args: ArgumentsMap) -> dict:
 
 
 def main():
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
+        config = json.load(fp)["mongodb"]
+
     print("{}\n\nQuerying...".format(LofkaColors.purple(LOFKA_BANNER)))
-    print("Version 1.4 Author: TsingJyujing@163.com")
+    print("Version 1.7 Author: TsingJyujing@163.com")
 
     args = ArgumentsMap(sys.argv)
     query_info = generate_message_filter(args)
@@ -67,47 +72,47 @@ def main():
 
     direction = args.query_default("head", False)
 
-    aggregate_pipeline = [
-        {
-            "$match": query_info
-        }
-    ]
+    conn = MongoClient(config["host"], int(config["port"]))  # 设定MongoDB的IP
+    db = conn.get_database(config["db"])  # 设定数据库名称
+    if "user" in config and "passwd" in config:
+        db.authenticate(config["user"], config["passwd"])  # 鉴权
+    coll = db.get_collection(config["coll"])  # 选定的Collection名称
+
+    print("Generating MongoDB query language ...")
+
+    if direction:
+        # 取前面的数据
+        sort_info = 1
+    else:
+        # 取后面的数据
+        sort_info = -1
+
+    cursor = coll.find(query_info).sort("timestamp", sort_info)
+
+    query_statement = "db.getCollection('lofka').find({}).sort({})".format(
+        LofkaColors.blue(json_util.dumps(query_info, indent=2)),
+        LofkaColors.cerulean(json_util.dumps({
+            "timestamp": sort_info
+        }, indent=2))
+    )
 
     if limit_info > 0:
-        if direction:
-            # 如果是摘取前面的日志
-            aggregate_pipeline.append({
-                "$sort": {
-                    "timestamp": 1
-                }
-            })
-        else:
-            # 如果是摘取最后日志
-            aggregate_pipeline.append({
-                "$sort": {
-                    "timestamp": -1
-                }
-            })
+        cursor = cursor.limit(limit_info)
+        query_statement += ".limit(\n  {}\n)".format(LofkaColors.cerulean(str(limit_info)))
 
-        aggregate_pipeline.append({
-            "$limit": limit_info
-        })
-
-    # 顺序输出
     if not direction:
-        aggregate_pipeline.append({
-            "$sort": {
-                "timestamp": 1
-            }
-        })
+        cursor = cursor.sort("timestamp", 1)
+        query_statement += ".sort({})".format(
+            LofkaColors.cerulean(LofkaColors.cerulean(json_util.dumps(
+                {
+                    "timestamp": 1
+                },
+                indent=2
+            )))
+        )
 
-    conn = MongoClient("输入你的MongoDB的地址", 27017)
-    db = conn.get_database("存放日志的数据库")
-    db.authenticate("账号", "密码")
-    coll = db.get_collection("Collection名称（一般是lofka）")
-    print("Generating MongoDB querying language...")
-    print("db.getCollection('lofka').aggregate({})".format(json_util.dumps(aggregate_pipeline, indent=2)))
-    for doc in coll.aggregate(aggregate_pipeline):
+    print("MQL generated:\n{}".format(query_statement))
+    for doc in cursor:
         try:
             print_message(doc)
         except Exception as ex:

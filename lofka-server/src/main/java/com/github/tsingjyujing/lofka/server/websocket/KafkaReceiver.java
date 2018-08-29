@@ -29,13 +29,6 @@ public class KafkaReceiver implements Runnable {
         // 准备循环读取
         consumer = new KafkaConsumer<>(properties);
         this.properties = properties;
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                closed.set(true);
-                consumer.wakeup();
-            }
-        }));
         // 设置新的GroupId，同时不提交Offset到Zookeeper
         this.properties.put(
                 "group.id",
@@ -44,6 +37,13 @@ public class KafkaReceiver implements Runnable {
                         System.currentTimeMillis()
                 )
         );
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                closed.set(true);
+                consumer.wakeup();
+            }
+        }));
     }
 
     @Override

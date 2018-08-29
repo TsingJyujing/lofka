@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
-import sys
 import datetime
+import os
+import sys
 import time
 import traceback
+
+from websocket import create_connection, WebSocketConnectionClosedException
+
 from config import *
 from console_util import *
-from websocket import create_connection, WebSocketConnectionClosedException
 
 
 def format_datetime(timestamp_info: object) -> str:
@@ -34,13 +37,30 @@ def message_formatter(log_data: dict) -> str:
     else:
         host_formatted = "Unknown host"
 
+    message = log_data["message"]
+    try:
+        if type(message) == str:
+            msg = json.dumps(
+                json.loads(message),
+                indent=2,
+                ensure_ascii=False
+            )
+        else:
+            msg = json.dumps(
+                message,
+                indent=2,
+                ensure_ascii=False
+            )
+    except:
+        msg = log_data["message"]
+
     logger_output = "{0} [{1}] [{2}] {3} [{6}://{5}]\t:{4}".format(
-        time_formatted,
+        LofkaColors.white(time_formatted),
         LEVEL_COLOR[log_data["level"]](
             str_size_limit(log_data["level"], limit_ahead=2, limit_after=3, padding=True, shrink_str="-")),
         LofkaColors.purple(str_size_limit(log_data["thread"], limit_ahead=4, limit_after=10, padding=True)),
         LofkaColors.blue(str_size_limit(log_data["logger"], limit_ahead=4, limit_after=10, padding=True)),
-        LofkaColors.cerulean(log_data["message"]),
+        LofkaColors.cerulean(msg),
         LofkaColors.cerulean(host_formatted),
         LofkaColors.yellow(log_data["app_name"])
     )
@@ -117,6 +137,8 @@ def create_js_from_filter_map(filter_map: dict) -> str:
 
 # noinspection PyBroadException
 def main():
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
+        config = json.load(fp)
     """
     主函数
     :return:
@@ -128,8 +150,8 @@ def main():
         "print_raw"
     }}
 
-    ws_host = arg_map.query_default("ws_host", "输入WebSocket的地址（IP/域名）")
-    ws_port = arg_map.query_default("ws_port", "输入WebSocket的端口")
+    ws_host = arg_map.query_default("ws_host", config["websocket"]["host"])
+    ws_port = arg_map.query_default("ws_port", str(config["websocket"]["port"]))
     print_raw = arg_map.query_default("print_raw", False)
     ws_address = "ws://{}:{}/lofka/websocket/logs".format(ws_host, ws_port)
     print("WebSocket connecting: {}".format(ws_address))
@@ -142,7 +164,7 @@ def main():
         js_script
     )
     print("Filter generated: \n{}".format(js_script))
-    print("Version 1.5 Author: TsingJyujing@163.com")
+    print("Version 1.7 Author: TsingJyujing@163.com")
     log_data = {}
     try:
         while True:

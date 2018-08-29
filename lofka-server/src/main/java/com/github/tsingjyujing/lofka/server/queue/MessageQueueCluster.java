@@ -1,7 +1,7 @@
 package com.github.tsingjyujing.lofka.server.queue;
 
 import com.github.tsingjyujing.lofka.server.util.Constants;
-import com.github.tsingjyujing.lofka.server.util.FileUtil;
+import com.github.tsingjyujing.lofka.util.FileUtil;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

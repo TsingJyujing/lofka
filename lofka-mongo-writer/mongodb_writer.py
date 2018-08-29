@@ -4,12 +4,15 @@
 """
 负责数据的后处理，数据库的管理和写入
 """
+import datetime
 import json
 import logging
-import datetime
+import os
+import sys
 import time
 import traceback
 from abc import abstractmethod
+
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from pymongo import MongoClient, HASHED, ASCENDING, IndexModel
@@ -106,13 +109,19 @@ class LoggerMongoDB(ILoggerSaver):
         """
         return self.coll.insert_one(self.process_log(json_data))
 
-    def __init__(self):
-        self.__conn = MongoClient("10.10.11.75", 27017)
-        db = self.__conn.get_database("logger")
-        db.authenticate("logger_write", "logger_write")
-        logger.info("Authenticated successfully.")
+    def __init__(self,
+                 host: str = "127.0.0.1",
+                 port: int = 27017,
+                 db: str = "logger", coll: str = "lofka",
+                 user: str = None, passwd: str = None
+                 ):
+        self.__conn = MongoClient(host, port)
+        db = self.__conn.get_database(db)
+        if user is not None and passwd is not None:
+            db.authenticate(user, passwd)
+            logger.info("Authenticated successfully.")
         # 判断表是否存在，不存在则创建，存在则直接返回
-        if "lofka" not in db.list_collection_names():
+        if coll not in db.list_collection_names():
             logger.info("Initializing collection while non-exist.")
             lofka = db.get_collection("lofka")
             lofka.create_indexes([
@@ -144,7 +153,7 @@ class LoggerMongoDB(ILoggerSaver):
             lofka.create_index([
                 ("message.http_user_agent", HASHED),
             ], partialFilterExpression={"type": "NGINX"})
-        self.coll = db.get_collection("lofka")
+        self.coll = db.get_collection(coll)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__conn.close()
@@ -155,18 +164,25 @@ class LoggerMongoDB(ILoggerSaver):
 
 # noinspection PyBroadException
 def main():
-    with open("kafka-config.json", "r") as fp:
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
         config = json.load(fp)
 
-    with LoggerMongoDB() as lm:
+    with LoggerMongoDB(
+            host=config["mongodb"]["host"],
+            port=config["mongodb"]["port"],
+            db=config["mongodb"]["db"],
+            coll=config["mongodb"]["coll"],
+            user=config["mongodb"]["user"],
+            passwd=config["mongodb"]["passwd"]
+    ) as lm:
         # 消息队列配置信息
-        client = KafkaClient(hosts=",".join(config["brokers"]))
-        topic_info = config["topic"]
+        client = KafkaClient(hosts=",".join(config["kafka"]["brokers"]))
+        topic_info = config["kafka"]["topic"]
         topic = client.topics[topic_info.encode()]
         balanced_consumer = topic.get_balanced_consumer(
-            consumer_group=config["group_id"].format(topic_info, int(time.time() * 1000)).encode(),
+            consumer_group=config["kafka"]["group_id"].format(topic_info, int(time.time() * 1000)).encode(),
             auto_commit_enable=True,  # 设置为Flase的时候不需要添加 consumer_group
-            zookeeper_connect=",".join(config["zookeepers"]),  # 这里就是连接多个zk
+            zookeeper_connect=",".join(config["kafka"]["zookeepers"]),  # 这里就是连接多个zk
             reset_offset_on_start=False,
             auto_offset_reset=OffsetType.LATEST
         )

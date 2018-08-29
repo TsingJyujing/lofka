@@ -2,7 +2,7 @@ package com.github.tsingjyujing.lofka.server;
 
 import com.github.tsingjyujing.lofka.server.socket.LoggerSocketServerCluster;
 import com.github.tsingjyujing.lofka.server.util.Constants;
-import com.github.tsingjyujing.lofka.server.util.FileUtil;
+import com.github.tsingjyujing.lofka.util.FileUtil;
 import com.github.tsingjyujing.lofka.server.websocket.KafkaReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

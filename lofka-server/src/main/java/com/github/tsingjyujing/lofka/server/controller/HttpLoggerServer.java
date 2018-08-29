@@ -370,5 +370,22 @@ public class HttpLoggerServer {
         return modelAndView;
     }
 
+    /**
+     * 用于显示的控制台
+     *
+     * @return
+     */
+    @RequestMapping(
+            value = "/lofka/console",
+            method = RequestMethod.GET,
+            produces = {
+                    MediaType.TEXT_HTML_VALUE
+            }
+    )
+    public ModelAndView consolePage() {
+        final ModelAndView modelAndView = new ModelAndView("console");
+        return modelAndView;
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.github.tsingjyujing.lofka.server.util;
+package com.github.tsingjyujing.lofka.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;

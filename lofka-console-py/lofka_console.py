@@ -41,12 +41,14 @@ def message_formatter(log_data: dict) -> str:
         if type(message) == str:
             msg = json.dumps(
                 json.loads(message),
-                indent=2
+                indent=2,
+                ensure_ascii=False
             )
         else:
             msg = json.dumps(
                 message,
-                indent=2
+                indent=2,
+                ensure_ascii=False
             )
     except:
         msg = log_data["message"]
@@ -134,6 +136,10 @@ def create_js_from_filter_map(filter_map: dict) -> str:
 
 # noinspection PyBroadException
 def main():
+
+    with open("config.json", "r") as fp:
+        config = json.load(fp)
+
     """
     主函数
     :return:
@@ -145,8 +151,8 @@ def main():
         "print_raw"
     }}
 
-    ws_host = arg_map.query_default("ws_host", "输入WebSocket的地址（IP/域名）")
-    ws_port = arg_map.query_default("ws_port", "输入WebSocket的端口")
+    ws_host = arg_map.query_default("ws_host", config["websocket"]["host"])
+    ws_port = arg_map.query_default("ws_port", str(config["websocket"]["port"]))
     print_raw = arg_map.query_default("print_raw", False)
     ws_address = "ws://{}:{}/lofka/websocket/logs".format(ws_host, ws_port)
     print("WebSocket connecting: {}".format(ws_address))
@@ -159,7 +165,7 @@ def main():
         js_script
     )
     print("Filter generated: \n{}".format(js_script))
-    print("Version 1.5 Author: TsingJyujing@163.com")
+    print("Version 1.7 Author: TsingJyujing@163.com")
     log_data = {}
     try:
         while True:

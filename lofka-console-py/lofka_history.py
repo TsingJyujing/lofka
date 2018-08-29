@@ -41,8 +41,11 @@ def generate_message_filter(args: ArgumentsMap) -> dict:
 
 
 def main():
+    with open("config.json", "r") as fp:
+        config = json.load(fp)["mongodb"]
+
     print("{}\n\nQuerying...".format(LofkaColors.purple(LOFKA_BANNER)))
-    print("Version 1.4 Author: TsingJyujing@163.com")
+    print("Version 1.7 Author: TsingJyujing@163.com")
 
     args = ArgumentsMap(sys.argv)
     query_info = generate_message_filter(args)
@@ -68,10 +71,11 @@ def main():
 
     direction = args.query_default("head", False)
 
-    conn = MongoClient("10.10.11.75", 27017)  # 设定MongoDB的IP
-    db = conn.get_database("logger")  # 设定数据库名称
-    db.authenticate("logger_read", "logger_read")  # 鉴权
-    coll = db.get_collection("lofka")  # 选定的Collection名称
+    conn = MongoClient(config["host"], int(config["port"]))  # 设定MongoDB的IP
+    db = conn.get_database(config["db"])  # 设定数据库名称
+    if "user" in config and "passwd" in config:
+        db.authenticate(config["user"], config["passwd"])  # 鉴权
+    coll = db.get_collection(config["coll"])  # 选定的Collection名称
 
     print("Generating MongoDB query language ...")
 

@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 
-import time
-from lofka_console import *
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
+
+from lofka_console import *
 
 
 def main():
@@ -12,6 +12,8 @@ def main():
     主函数
     :return:
     """
+    with open("config.json", "r") as fp:
+        config = json.load(fp)
     arg_map = ArgumentsMap(sys.argv)
     filter_map = {k: set(v.split(",")) for k, v in arg_map.query_all().items() if k not in {
         "topic",
@@ -20,18 +22,21 @@ def main():
         "print_raw"
     }}
     print_raw = arg_map.query_default("print_raw", False)
-    topic_info = arg_map.query_default("topic", "logger-json")# 设置你的Topic名称
-    kafka_servers = arg_map.query_default("bootstrap_servers", "Kafka服务器地址")
-    zookeeper_servers = arg_map.query_default("zookeeper_servers", "Zookeeper地址")
+    topic_info = arg_map.query_default("topic", config["topic"])  # 设置你的Topic名称
+    kafka_servers = arg_map.query_default(
+        "bootstrap_servers",
+        ",".join(config["brokers"])
+    )  # 设置你的 kafka bootstrap_servers 名称
+    zookeeper_servers = arg_map.query_default(
+        "zookeeper_servers",
+        ",".join(config["zookeepers"])
+    )  # 设置ZK地址
     print(
         "Kafka config: servers={} zookeeper={} topic={}".format(
             kafka_servers.split(","),
             zookeeper_servers.split(","),
             topic_info
         )
-    )
-    print(
-        "[Kafka Console Consumer Deprecated from Version 1.5]"
     )
     client = KafkaClient(hosts=kafka_servers)
     topic = client.topics[topic_info.encode()]
@@ -43,7 +48,7 @@ def main():
         auto_offset_reset=OffsetType.LATEST
     )
     print("{}\n\nConnected, waiting for messages.".format(LofkaColors.blue(LOFKA_BANNER)))
-    print("Version 1.5 Author: TsingJyujing@163.com")
+    print("Version 1.7 Author: TsingJyujing@163.com")
     try:
         while True:
             try:

@@ -7,6 +7,8 @@
 import datetime
 import json
 import logging
+import os
+import sys
 import time
 import traceback
 from abc import abstractmethod
@@ -162,7 +164,7 @@ class LoggerMongoDB(ILoggerSaver):
 
 # noinspection PyBroadException
 def main():
-    with open("config.json", "r") as fp:
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
         config = json.load(fp)
 
     with LoggerMongoDB(

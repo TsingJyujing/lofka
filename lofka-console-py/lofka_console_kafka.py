@@ -12,7 +12,7 @@ def main():
     主函数
     :return:
     """
-    with open("config.json", "r") as fp:
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
         config = json.load(fp)
     arg_map = ArgumentsMap(sys.argv)
     filter_map = {k: set(v.split(",")) for k, v in arg_map.query_all().items() if k not in {

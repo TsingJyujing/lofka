@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 import datetime
+import os
 import sys
 import time
 import traceback
@@ -136,10 +137,8 @@ def create_js_from_filter_map(filter_map: dict) -> str:
 
 # noinspection PyBroadException
 def main():
-
-    with open("config.json", "r") as fp:
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
         config = json.load(fp)
-
     """
     主函数
     :return:

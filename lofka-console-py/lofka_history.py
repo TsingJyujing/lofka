@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import datetime
+import os
 import sys
 import traceback
 
@@ -41,7 +42,7 @@ def generate_message_filter(args: ArgumentsMap) -> dict:
 
 
 def main():
-    with open("config.json", "r") as fp:
+    with open(os.path.join(sys.path[0], "config.json"), "r") as fp:
         config = json.load(fp)["mongodb"]
 
     print("{}\n\nQuerying...".format(LofkaColors.purple(LOFKA_BANNER)))

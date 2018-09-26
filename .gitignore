@@ -231,3 +231,5 @@ buildNumber.properties
 将删除 lofka-persistence/src/main/resources/
 将删除 lofka-python-utils/.idea/inspectionProfiles/
 将删除 lofka-tail-py/.idea/inspectionProfiles/
+将删除 lofka-persistence/src/test/
+将删除 lofka-server/src/main/resources/static/css/

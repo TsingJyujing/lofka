@@ -25,6 +25,7 @@
         <module>lofka-utils</module>
         <module>lofka-server</module>
         <module>lofka-es-writer</module>
+        <module>lofka-persistence</module>
     </modules>
     <developers>
         <developer>

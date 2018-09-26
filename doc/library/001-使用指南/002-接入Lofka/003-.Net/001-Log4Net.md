@@ -36,10 +36,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        var configFile = new FileInfo("log4net.config");
+        var config = new FileInfo("log4net.config");
         var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAppender));//加载Lofka.Dotnet.Log4net应用程序集
         var repository = LogManager.GetRepository(assembly);
-        XmlConfigurator.Configure(repository, configFile);//初始化配置
+        XmlConfigurator.Configure(repository, config);//初始化配置
         var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         log.Info("Hello,this is Example");
         try
@@ -96,10 +96,10 @@ HttpAysncAppender 是一个异步的适配器，特点是，收到日志以后�
      static void Main(string[] args)
      {
          Thread.CurrentThread.Name = "main";
-         var configFile = new FileInfo("log4net.config");
+         var config = new FileInfo("log4net.config");
          var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
          var repository = LogManager.GetRepository(assembly);
-         XmlConfigurator.Configure(repository, configFile);//初始化配置
+         XmlConfigurator.Configure(repository, config);//初始化配置
          var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
          for (int i = 0; i < 90; i++)
          {
@@ -122,17 +122,17 @@ HttpAysncAppender 是一个异步的适配器，特点是，收到日志以后�
 ####  HttpAppender
 
 ```Csharp
-var configFile = new FileInfo("log4net.config");
+var config = new FileInfo("log4net.config");
 var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAppender));//加载Lofka.Dotnet.Log4net应用程序集
 var repository = LogManager.GetRepository(assembly);
-XmlConfigurator.Configure(repository, configFile);//初始化配置
+XmlConfigurator.Configure(repository, config);//初始化配置
 ```
 ####  HttpAysncAppender
 ```Csharp
-var configFile = new FileInfo("log4net.config");
+var config = new FileInfo("log4net.config");
 var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
 var repository = LogManager.GetRepository(assembly);
-XmlConfigurator.Configure(repository, configFile);//初始化配置
+XmlConfigurator.Configure(repository, config);//初始化配置
 ```
 
 ## 写在最后

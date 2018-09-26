@@ -1,81 +1,45 @@
 package com.github.tsingjyujing.lofka.server.websocket;
 
-import com.google.common.collect.Lists;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.tsingjyujing.lofka.persistence.basic.BaseKafkaProcessor;
+import org.bson.Document;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 接受Kafka数据的进程
+ * 接受Kafka数据，并且传递给WebSocket的进程
+ *
  * @author yuanyifan
  */
-public class KafkaReceiver implements Runnable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
-    private final KafkaConsumer<Integer, String> consumer;
-    private final Properties properties;
-
-    private final AtomicBoolean closed = new AtomicBoolean(false);
+public class KafkaReceiver extends BaseKafkaProcessor {
 
     /**
      * Kafka数据接收器
      */
     public KafkaReceiver(Properties properties) {
-        // 读取配置文件初始化 Kafka Client
-        // 准备循环读取
-        consumer = new KafkaConsumer<>(properties);
-        this.properties = properties;
-        // 设置新的GroupId，同时不提交Offset到Zookeeper
-        this.properties.put(
-                "group.id",
-                String.format(
-                        "logger-json-server-consumer-%d",
-                        System.currentTimeMillis()
-                )
-        );
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                closed.set(true);
-                consumer.wakeup();
-            }
-        }));
+        super(properties);
+
+        LOGGER.info("Start kafka receiver (to websocket) successfully.");
     }
 
+    /**
+     * 处理批量的日志数据
+     *
+     * @param logs 日志数据
+     * @throws Exception
+     */
     @Override
-    public void run() {
-        final String defaultTopic = properties.getProperty("kafka.topic", "logger-json");
-        consumer.subscribe(Lists.newArrayList(defaultTopic));
-        LOGGER.debug("Reading topic:\t" + defaultTopic);
-        while (!closed.get()) {
+    public void processLoggers(Iterable<Document> logs) throws Exception {
+        Exception lastEx = null;
+        for (Document log : logs) {
             try {
-                LOGGER.debug("Polling...");
-                final ConsumerRecords<Integer, String> records = consumer.poll(10000);
-                LOGGER.debug("Polled, interring...");
-                for (ConsumerRecord<Integer, String> record : records) {
-                    try {
-                        // 推送到群发接口
-                        LoggerPushWebSocket.sendMessageGrouply(record.value());
-                        LOGGER.debug(
-                                "Get message {}/{}/{}",
-                                record.topic(),
-                                record.partition(),
-                                record.offset()
-                        );
-                    } catch (Throwable ex) {
-                        LOGGER.error("Error while process data from Kafka.", ex);
-                        LOGGER.error("Message value: {}", record.value());
-                        LOGGER.error("Message key: {}", record.key());
-                    }
-                }
-            } catch (Exception kafkaException) {
-                LOGGER.error("Error while reading kafka", kafkaException);
+                LoggerPushWebSocket.sendMessageGrouply(log.toJson());
+            } catch (Exception ex) {
+                lastEx = ex;
             }
         }
-        consumer.close();
+        if (lastEx != null) {
+            throw lastEx;
+        }
     }
+
 }

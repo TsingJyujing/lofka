@@ -1,8 +1,7 @@
 package com.github.tsingjyujing.lofka.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 public class FileUtil {
@@ -51,5 +50,50 @@ public class FileUtil {
         return properties;
     }
 
+    /**
+     * 获取给定文件名的文本内容
+     *
+     * @param filename 文件名称
+     * @return
+     */
+    public static String getFileText(String filename) throws IOException {
+        try {
+            return convert(new FileInputStream("conf/" + filename));
+        } catch (Exception ex) {
+            return convert(FileUtil.class.getResourceAsStream("/" + filename));
+        }
+    }
 
+    /**
+     * 将流转换为文本
+     *
+     * @param inputStream
+     * @param charset
+     * @return
+     * @throws IOException
+     */
+    public static String convert(InputStream inputStream, Charset charset) throws IOException {
+        final StringBuilder stringBuilder = new StringBuilder();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+
+    /**
+     * 将流转换为文本
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static String convert(InputStream inputStream) throws IOException {
+        return convert(inputStream, Charset.forName("UTF-8"));
+    }
 }

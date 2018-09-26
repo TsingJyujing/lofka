@@ -1,0 +1,19 @@
+package com.github.tsingjyujing.lofka.persistence.basic;
+
+import org.bson.Document;
+
+/**
+ * 批量数据处理
+ *
+ * @author yuanyifan
+ */
+public interface IBatchLoggerProcessor {
+
+    /**
+     * Process (print or persistence it)
+     *
+     * @param logs log in LoggerJson format
+     */
+    void processLoggers(Iterable<Document> logs);
+
+}

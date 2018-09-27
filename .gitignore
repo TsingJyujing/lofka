@@ -226,10 +226,4 @@ buildNumber.properties
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
-
-将删除 lofka-console-py/.idea/inspectionProfiles/
-将删除 lofka-persistence/src/main/resources/
-将删除 lofka-python-utils/.idea/inspectionProfiles/
-将删除 lofka-tail-py/.idea/inspectionProfiles/
-将删除 lofka-persistence/src/test/
-将删除 lofka-server/src/main/resources/static/css/
+.vs/

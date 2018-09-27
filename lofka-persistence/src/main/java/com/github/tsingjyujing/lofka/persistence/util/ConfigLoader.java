@@ -3,6 +3,7 @@ package com.github.tsingjyujing.lofka.persistence.util;
 import com.github.tsingjyujing.lofka.persistence.basic.IBatchLoggerProcessor;
 import com.github.tsingjyujing.lofka.persistence.basic.ILogReceiver;
 import com.github.tsingjyujing.lofka.persistence.source.KafkaMultiPersistence;
+import com.github.tsingjyujing.lofka.persistence.writers.LocalFileWriter;
 import com.github.tsingjyujing.lofka.persistence.writers.MongoDBWriter;
 import com.github.tsingjyujing.lofka.util.FileUtil;
 import com.google.common.collect.Lists;
@@ -22,6 +23,7 @@ import java.util.Properties;
 
 /**
  * 配置文件加载器
+ *
  * @author yuanyifan
  */
 public class ConfigLoader {
@@ -37,10 +39,12 @@ public class ConfigLoader {
      * @throws ClassNotFoundException 无法找到该初始化方法
      * @throws IOException            无法读取相应的配置文件
      */
-    public static IBatchLoggerProcessor processorFactory(ProcessorInfo processorInfo) throws ClassNotFoundException, IOException {
+    public static IBatchLoggerProcessor processorFactory(ProcessorInfo processorInfo) throws Exception {
         switch (processorInfo.getProcessorType().toLowerCase()) {
             case "mongodb":
                 return new MongoDBWriter(processorInfo.getProperties());
+            case "file":
+                return new LocalFileWriter(processorInfo.getProperties());
             default:
                 throw new ClassNotFoundException("Can't initialize by name:" + processorInfo.getProcessorType());
         }
@@ -55,7 +59,7 @@ public class ConfigLoader {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static ILogReceiver sourceFactory(SourceInfo srcInfo, Iterable<IBatchLoggerProcessor> processors) throws IOException, ClassNotFoundException {
+    public static ILogReceiver sourceFactory(SourceInfo srcInfo, Iterable<IBatchLoggerProcessor> processors) throws Exception {
         switch (srcInfo.getSourceType()) {
             case "kafka":
                 return new KafkaMultiPersistence(
@@ -91,7 +95,7 @@ public class ConfigLoader {
 
         private Map<String, String> config;
 
-        public IBatchLoggerProcessor getProcessor() throws IOException, ClassNotFoundException {
+        public IBatchLoggerProcessor getProcessor() throws Exception {
             return processorFactory(this);
         }
 
@@ -143,7 +147,7 @@ public class ConfigLoader {
 
         private Map<String, Object> processors;
 
-        public ILogReceiver getSource() throws IOException, ClassNotFoundException {
+        public ILogReceiver getSource() throws Exception {
             ArrayList<IBatchLoggerProcessor> result = Lists.newArrayList();
             for (ProcessorInfo processorInfo : getProcessors()) {
                 result.add(processorInfo.getProcessor());
@@ -165,7 +169,7 @@ public class ConfigLoader {
      * @return
      * @throws IOException
      */
-    public static ArrayList<ILogReceiver> loadSource(String jsonConfigFile) throws IOException, ClassNotFoundException {
+    public static ArrayList<ILogReceiver> loadSource(String jsonConfigFile) throws Exception {
         final ArrayList<ILogReceiver> result = Lists.newArrayList();
         for (SourceInfo sourceInfo : stringToList(FileUtil.getFileText(jsonConfigFile), SourceInfo.class)) {
             result.add(sourceInfo.getSource());
@@ -179,7 +183,7 @@ public class ConfigLoader {
      * @return
      * @throws IOException
      */
-    public static ArrayList<ILogReceiver> loadSource() throws IOException, ClassNotFoundException {
+    public static ArrayList<ILogReceiver> loadSource() throws Exception {
         return loadSource("source.json");
     }
 

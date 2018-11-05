@@ -22,7 +22,7 @@ public class Entry {
      * @param args 不需要参数
      */
     public static void main(String[] args) throws Exception {
-        runServices("lofka-persistence.json",false);
+        runServices("lofka-persistence.json", false);
     }
 
     /**
@@ -31,7 +31,7 @@ public class Entry {
      * @param configFilename 配置文件名称
      * @throws Exception
      */
-    public static void runServices(String configFilename,boolean nonBlock) throws Exception {
+    public static void runServices(String configFilename, boolean nonBlock) throws Exception {
         final ArrayList<ILogReceiver> sourceList = ConfigLoader.loadSource(configFilename);
 
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
@@ -54,7 +54,7 @@ public class Entry {
         threadPool.shutdown();
         LOGGER.info("Persistence service(s) is running...");
 
-        if (!nonBlock){
+        if (!nonBlock) {
             threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             LOGGER.error("Persistence service(s) terminated abnormally");
         }

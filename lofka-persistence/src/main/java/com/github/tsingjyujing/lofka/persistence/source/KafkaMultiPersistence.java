@@ -6,6 +6,7 @@ import com.github.tsingjyujing.lofka.persistence.basic.ILogReceiverProcessable;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -35,7 +36,7 @@ public class KafkaMultiPersistence extends BaseKafkaProcessor implements ILogRec
      * @return
      */
     @Override
-    public Iterable<IBatchLoggerProcessor> getProcessors() {
+    public Collection<IBatchLoggerProcessor> getProcessors() {
         return processors;
     }
 }

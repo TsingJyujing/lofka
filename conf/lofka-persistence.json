@@ -1,15 +1,8 @@
 [
   {
-    "sourceType": "kafka",
+    "sourceType": "local",
     "config": {
-      "auto.commit.interval.ms": "99999999",
-      "auto.offset.reset": "latest",
-      "bootstrap.servers": "10.10.11.75:9092",
-      "enable.auto.commit": "true",
-      "group.id": "logger-json-persistence-consumer-test",
-      "kafka.topic": "logger-json",
-      "key.deserializer": "org.apache.kafka.common.serialization.IntegerDeserializer",
-      "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer"
+      "register.name":"shard-local"
     },
     "processors": {
       "mongodb-saver-0": {
@@ -26,15 +19,7 @@
           "mongodb.expired.setting.NGINX": "16416000000",
           "mongodb.expired.setting.TRACE": "300000",
           "mongodb.expired.setting.WARN": "2678400000",
-          "mongodb.servers": "127.0.0.1:27017"
-        }
-      },
-      "filesaver-0":{
-        "processorType": "file",
-        "config": {
-          "filename":"test.log",
-          "flush.interval":"500",
-          "append":"true"
+          "mongodb.servers": "name1:27017,name2:27017,data1:27017,data2:27017,data3:27017"
         }
       }
     }

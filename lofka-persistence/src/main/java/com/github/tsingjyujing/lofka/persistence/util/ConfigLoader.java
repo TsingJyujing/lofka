@@ -3,6 +3,7 @@ package com.github.tsingjyujing.lofka.persistence.util;
 import com.github.tsingjyujing.lofka.persistence.basic.IBatchLoggerProcessor;
 import com.github.tsingjyujing.lofka.persistence.basic.ILogReceiver;
 import com.github.tsingjyujing.lofka.persistence.source.KafkaMultiPersistence;
+import com.github.tsingjyujing.lofka.persistence.source.LocalWriterQueue;
 import com.github.tsingjyujing.lofka.persistence.writers.LocalFileWriter;
 import com.github.tsingjyujing.lofka.persistence.writers.MongoDBWriter;
 import com.github.tsingjyujing.lofka.util.FileUtil;
@@ -16,13 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * 配置文件加载器
+ *
+ * 通过加载格式化的JSON文件内容
  *
  * @author yuanyifan
  */
@@ -45,6 +45,7 @@ public class ConfigLoader {
                 return new MongoDBWriter(processorInfo.getProperties());
             case "file":
                 return new LocalFileWriter(processorInfo.getProperties());
+                // 可以在这里继续增加相应的持久化工厂方法
             default:
                 throw new ClassNotFoundException("Can't initialize by name:" + processorInfo.getProcessorType());
         }
@@ -59,10 +60,15 @@ public class ConfigLoader {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static ILogReceiver sourceFactory(SourceInfo srcInfo, Iterable<IBatchLoggerProcessor> processors) throws Exception {
+    public static ILogReceiver sourceFactory(SourceInfo srcInfo, Collection<IBatchLoggerProcessor> processors) throws Exception {
         switch (srcInfo.getSourceType()) {
             case "kafka":
                 return new KafkaMultiPersistence(
+                        srcInfo.getProperties(),
+                        processors
+                );
+            case "local":
+                return new LocalWriterQueue(
                         srcInfo.getProperties(),
                         processors
                 );
@@ -75,6 +81,15 @@ public class ConfigLoader {
      * 方便解析配置文件的实体类
      */
     private class ProcessorInfo {
+        /**
+         * 日志处理器的类型
+         */
+        private String processorType;
+        /**
+         * Map类型的配置信息
+         */
+        private Map<String, String> config;
+
         public String getProcessorType() {
             return processorType;
         }
@@ -83,8 +98,6 @@ public class ConfigLoader {
             this.processorType = processorType;
         }
 
-        private String processorType;
-
         public Map<String, String> getConfig() {
             return config;
         }
@@ -92,8 +105,6 @@ public class ConfigLoader {
         public void setConfig(Map<String, String> config) {
             this.config = config;
         }
-
-        private Map<String, String> config;
 
         public IBatchLoggerProcessor getProcessor() throws Exception {
             return processorFactory(this);
@@ -108,9 +119,18 @@ public class ConfigLoader {
 
 
     /**
-     * 解析Source配置文件
+     * 解析Source配置文件的实体类
      */
     private class SourceInfo {
+        /**
+         * 数据源类型
+         */
+        private String sourceType;
+
+        /**
+         *
+         */
+        private Map<String, String> config;
 
         public String getSourceType() {
             return sourceType;
@@ -120,7 +140,7 @@ public class ConfigLoader {
             this.sourceType = sourceType;
         }
 
-        private String sourceType;
+
 
         public Map<String, String> getConfig() {
             return config;
@@ -130,7 +150,6 @@ public class ConfigLoader {
             this.config = config;
         }
 
-        private Map<String, String> config;
 
 
         public List<ProcessorInfo> getProcessors() {

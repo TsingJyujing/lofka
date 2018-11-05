@@ -12,6 +12,7 @@ import com.mongodb.client.model.InsertManyOptions;
 import org.bson.Document;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +54,10 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
         this(FileUtil.autoReadProperties(configFileName));
     }
 
+    /**
+     * 加载默认配置文件
+     * @throws IOException
+     */
     public MongoDBWriter() throws IOException {
         this("persistence/mongodb.properties");
     }
@@ -65,7 +70,7 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
      * @param logs log in LoggerJson format
      */
     @Override
-    public void processLoggers(Iterable<Document> logs) {
+    public void processLoggers(Collection<Document> logs) {
         final long deprecatedTick = System.currentTimeMillis() + expiredMills;
         try {
             final List<Document> documentList = Lists.newArrayList();
@@ -100,7 +105,8 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
                 new IndexModel(new Document("app_name", HASHED), new IndexOptions().sparse(true)),
                 new IndexModel(new Document("host.ip", HASHED)),
                 new IndexModel(new Document("level", HASHED)),
-                new IndexModel(new Document("kafka_info", ASCENDING), new IndexOptions().unique(true)),
+                // 分片儿模式不支持
+                // new IndexModel(new Document("kafka_info", ASCENDING), new IndexOptions().unique(true)),
                 new IndexModel(new Document("logger", HASHED))
         ));
         final IndexOptions nginxPartialIndexOption = new IndexOptions().partialFilterExpression(

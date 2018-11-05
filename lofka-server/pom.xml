@@ -109,13 +109,6 @@
             <version>${kafka.client.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>bson</artifactId>
-            <version>3.6.3</version>
-        </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

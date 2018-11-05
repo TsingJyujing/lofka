@@ -3,6 +3,7 @@ package com.github.tsingjyujing.lofka.server;
 import com.github.tsingjyujing.lofka.server.socket.LoggerSocketServerCluster;
 import com.github.tsingjyujing.lofka.server.util.Constants;
 import com.github.tsingjyujing.lofka.server.websocket.KafkaReceiver;
+import com.github.tsingjyujing.lofka.server.websocket.LocalReceiver;
 import com.github.tsingjyujing.lofka.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,10 @@ public class Entry {
                     // 加载配置文件
                     FileUtil.autoReadProperties(Constants.FILE_LOFKA_KAFKA_CLIENT)
             ).run();
-
-        } catch (IOException ex) {
-            LOGGER.error("Error while initializing Kafka receiver.", ex);
+        } catch (Exception ex) {
+            LOGGER.warn("Error while initializing Kafka receiver.", ex);
+            LOGGER.info("Trying to load LocalReceiver...");
+            new LocalReceiver().run();
         }
     }
 }

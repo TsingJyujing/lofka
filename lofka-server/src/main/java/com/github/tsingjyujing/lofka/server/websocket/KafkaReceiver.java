@@ -3,6 +3,7 @@ package com.github.tsingjyujing.lofka.server.websocket;
 import com.github.tsingjyujing.lofka.persistence.basic.BaseKafkaProcessor;
 import org.bson.Document;
 
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -28,7 +29,7 @@ public class KafkaReceiver extends BaseKafkaProcessor {
      * @throws Exception
      */
     @Override
-    public void processLoggers(Iterable<Document> logs) throws Exception {
+    public void processLoggers(Collection<Document> logs) throws Exception {
         Exception lastEx = null;
         for (Document log : logs) {
             try {

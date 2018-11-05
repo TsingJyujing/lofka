@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -53,7 +54,7 @@ public class LocalFileWriter implements IBatchLoggerProcessor {
      * @param logs log in LoggerJson format
      */
     @Override
-    public void processLoggers(Iterable<Document> logs) {
+    public void processLoggers(Collection<Document> logs) {
         for (Document log : logs) {
             writer.println(log.toJson());
         }

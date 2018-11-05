@@ -1,0 +1,12 @@
+# 如果不是需要获取全部的日志，请不要配置这个文件
+# 输入你Kafka的服务器地址
+bootstrap.servers=data1:9092,data2:9092,data3:9092
+group.id=logger-json-server-consumer
+enable.auto.commit=false
+auto.offset.reset=latest
+auto.commit.interval.ms=99999999
+key.deserializer=org.apache.kafka.common.serialization.IntegerDeserializer
+value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+# My config
+kafka.topic=logger-json
+# 如果不需要转发请修改文件名称或者直接删除配置文件

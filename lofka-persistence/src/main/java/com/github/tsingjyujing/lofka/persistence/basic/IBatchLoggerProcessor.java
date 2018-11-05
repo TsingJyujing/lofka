@@ -2,6 +2,8 @@ package com.github.tsingjyujing.lofka.persistence.basic;
 
 import org.bson.Document;
 
+import java.util.Collection;
+
 /**
  * 批量数据处理
  *
@@ -14,6 +16,6 @@ public interface IBatchLoggerProcessor {
      *
      * @param logs log in LoggerJson format
      */
-    void processLoggers(Iterable<Document> logs);
+    void processLoggers(Collection<Document> logs);
 
 }

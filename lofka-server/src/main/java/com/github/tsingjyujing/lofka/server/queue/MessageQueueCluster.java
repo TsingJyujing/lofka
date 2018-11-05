@@ -42,6 +42,8 @@ public class MessageQueueCluster implements IMessageQueue {
         } catch (Exception ex) {
             LOGGER.info("Fail to load redirect Queue, may be not configured.");
         }
+        // 本地持久化工具配置
+        messageQueueMap.put("local", new LocalMessageQueue());
         // 如果有其他的转发配置也在这里
     }
 

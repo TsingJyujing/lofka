@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lofka Console</title>
+    <link rel="icon" type="image/x-icon" href="img/icon.png">
+    <script src="js/lofka/console.js"></script>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+
+    <link rel="stylesheet" href="css/xterm.css"/>
+    <script src="js/xterm/xterm.js"></script>
+    <script src="js/terminal.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <script src="js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap-dialog.min.css"/>
+    <script src="js/bootstrap-dialog.min.js"></script>
+
+</head>
+<body>
+<br/>
+<div class="container-fluid" id="div_main">
+    <div class="row-fluid">
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        设置
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row-fluid">
+                        <div class="col-md-12">
+                            <label>请输入过滤函数(EMACS5)：</label><br/>
+                            <!-- todo 使用JS编辑器 -->
+                            <textarea class="form-control" style="resize:none;font-family: monospace"
+                                      id="function_text_area">
+function(log){return false;}
+            </textarea><br/>
+                            <a class="btn btn-primary btn-large" href="#" onclick="apply_function()">应用 &raquo;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-md-12" id="terminal">
+            <!--端末-->
+        </div>
+    </div>
+</div>
+<script>
+
+    const term = new Terminal();
+    term.open(document.getElementById('terminal'));
+    fitTerminal(term);
+
+    const ws = new WebSocket('/lofka/websocket/logs');//ws://10.10.11.75:9500/
+
+    function apply_function() {
+        const function_text = $("#function_text_area").val();
+        // todo Apply function on simulated data to ensure function is stoppable
+        term.clear();
+        ws.send(function_text);
+    }
+
+    ws.onopen = function (evt) {
+        term.write("Connection established.\n");
+        //log['app_name']==='cvnavi/online/cloudera/auto-ops'
+        ws.send("function filter(log) {return false;}");
+        console.log(evt);
+    };
+
+    ws.onmessage = function (event) {
+        const console_print = auto_format_message(
+            JSON.parse(
+                event.data
+            )
+        );
+        term.write(
+            console_print.replace(/\n/g, "\r\n")
+        );
+        term.write("\r\n");
+    };
+
+    ws.onerror = function (event) {
+        console.error("Error caught from WebSocket:");
+        console.error(event);
+    };
+
+    window.onbeforeunload = function (e) {
+        ws.close()
+    };
+
+</script>
+</body>
+</html>

@@ -2,6 +2,8 @@ package com.github.tsingjyujing.lofka.persistence.basic;
 
 import org.bson.Document;
 
+import java.util.Collection;
+
 /**
  * Logger processor
  *
@@ -19,7 +21,7 @@ public interface ILoggerProcessor extends IBatchLoggerProcessor {
     void processLogger(Document log);
 
     @Override
-    default void processLoggers(Iterable<Document> logs) {
+    default void processLoggers(Collection<Document> logs) {
         for (Document log : logs) {
             processLogger(log);
         }

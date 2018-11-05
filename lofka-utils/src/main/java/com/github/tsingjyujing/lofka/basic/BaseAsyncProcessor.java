@@ -3,6 +3,7 @@ package com.github.tsingjyujing.lofka.basic;
 
 import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,6 +61,17 @@ public abstract class BaseAsyncProcessor<DataType> {
         if (data != null) {
             synchronized (dataBuffer) {
                 dataBuffer.offer(data);
+            }
+            if (dataBuffer.size() > getMaxBufferSize()) {
+                cleanBufferList();
+            }
+        }
+    }
+
+    public void offerData(Collection<DataType> data) {
+        if (data != null) {
+            synchronized (dataBuffer) {
+                dataBuffer.addAll(data);
             }
             if (dataBuffer.size() > getMaxBufferSize()) {
                 cleanBufferList();

@@ -3,7 +3,7 @@
  * @param log 日志对象
  * @returns {boolean} 是否通过校验
  */
-function filter(log) {return true;}
+function filter(log) {return false;}
 
 /**
  * Java 调用的函数

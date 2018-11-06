@@ -54,7 +54,7 @@ public class LoggerPushWebSocket {
         this.session = session;
         WEB_SOCKET_CLIENTS.add(this);
         ONLINE_COUNT.set(WEB_SOCKET_CLIENTS.size());
-        LOGGER.info("New web socket established: {}, current clients: {}", session.getId(), ONLINE_COUNT.get());
+        LOGGER.info("New static socket established: {}, current clients: {}", session.getId(), ONLINE_COUNT.get());
     }
 
     /**

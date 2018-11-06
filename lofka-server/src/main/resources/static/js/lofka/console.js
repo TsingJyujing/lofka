@@ -70,7 +70,7 @@ function get_linked_key_in_dict(x, k) {
     if (k.indexOf(".") < 0) {
         return x[k]
     } else {
-        const ks = k.split(".")
+        const ks = k.split(".");
         return get_linked_key_in_dict(x, ks.slice(1, ks.length));
     }
 }
@@ -255,6 +255,9 @@ function nginx_message_formatter(log_data) {
 
 function auto_format_message(log_data) {
     try {
+        if ("echo" in log_data) {
+            return "Function committed to server successfully:\n" + JSON.stringify(log_data, null, 2);
+        }
         if ("type" in log_data) {
             if (log_data["type"].toUpperCase() === "NGINX") {
                 return nginx_message_formatter(log_data);

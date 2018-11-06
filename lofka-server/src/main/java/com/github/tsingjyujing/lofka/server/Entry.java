@@ -9,7 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.github.tsingjyujing.lofka.persistence.Entry.runServices;
@@ -19,8 +23,20 @@ import static com.github.tsingjyujing.lofka.persistence.Entry.runServices;
  *
  * @author yuanyifan
  */
+@Configuration
 @SpringBootApplication
-public class Entry {
+public class Entry
+        implements WebMvcConfigurer
+{
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(
+                "/lofka/static/**"
+        ).addResourceLocations(
+                "classpath:/static/"
+        );
+    }
+
     private final static Logger LOGGER = LoggerFactory.getLogger(Entry.class.getName());
 
     public static void main(String[] args) {

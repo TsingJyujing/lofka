@@ -75,7 +75,7 @@
         "message":"异常产生的消息",
         "stack_trace":[//堆栈追踪列表
             {
-                "class":"org.springframework.web.method.annotation.RequestParamMethodArgumentResolver",
+                "class":static,
                 "filename":"RequestParamMethodArgumentResolver.java",
                 "method":"handleMissingValue",
                 "line":198

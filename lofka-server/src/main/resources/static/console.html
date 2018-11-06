@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="/lofka/static/css/bootstrap-theme.min.css"/>
     <script src="/lofka/static/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" href="/css/bootstrap-dialog.min.css"/>
-    <script src="/lofka/static/js/bootstrap-dialog.min.js"></script>
 
     <!--代码编辑器-->
     <link rel="stylesheet" href="/lofka/static/editor/lib/codemirror.css"/>
@@ -128,8 +126,24 @@
     const test_data = [];
 
     $.getJSON(
-        "/data/"
-    )
+        "/lofka/static/data/simulate_data.json", function (data) {
+            data.forEach(
+                (datum) => {
+                    test_data.push(datum)
+                }
+            )
+        }
+    );
+
+    function test_function_on_data(func) {
+        test_data.forEach(
+            datum=>{
+                if(typeof(func(datum))!=="boolean"){
+                    throw Error("Function return is not boolean.")
+                }
+            }
+        );
+    }
 
     const terminal = initialize_terminal("terminal");
 
@@ -220,7 +234,10 @@
      */
     function apply_function() {
         const function_text = editor.getValue();
-        // todo Apply function on simulated data to ensure function is stoppable
+        eval(
+            function_text
+        );
+        test_function_on_data(filter);
         terminal.clear();
         web_socket.send(function_text);
     }

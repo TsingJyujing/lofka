@@ -15,7 +15,7 @@ namespace Example.Log4net.HttpAsyncAppender
             var configFile = new FileInfo("log4net.config");
             var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
             var repository = LogManager.GetRepository(assembly);
-            var col= XmlConfigurator.Configure(repository, configFile);//初始化配置
+            XmlConfigurator.Configure(repository, configFile);//初始化配置
             var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
             for (int i = 0; i < 90; i++)
             {

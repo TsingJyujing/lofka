@@ -76,7 +76,7 @@ public abstract class BaseClosableTimedTask implements Runnable, AutoCloseable {
 
     @Override
     public void run() {
-        long lastRanTick = System.currentTimeMillis();
+        long lastRanTick = 0;
         while (!isClosed.get()) {
             try {
                 final long deltaTick = System.currentTimeMillis() - lastRanTick;

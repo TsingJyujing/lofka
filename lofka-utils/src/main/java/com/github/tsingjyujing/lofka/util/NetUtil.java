@@ -4,7 +4,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -23,6 +25,8 @@ import org.bson.Document;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -89,15 +93,41 @@ public class NetUtil {
         return getHttpClient(REQUEST_CONFIG);
     }
 
-
     private static String postEntity(String uri, AbstractHttpEntity data) throws IOException {
+        final HttpPost postBase = new HttpPost(uri);
+        postBase.setEntity(data);
+        return httpRequest(postBase);
+    }
+
+    /**
+     * GET方法获取数据
+     *
+     * @param uri URI
+     * @return
+     * @throws IOException
+     */
+    public static String get(URI uri) throws IOException {
+        final HttpGet getBase = new HttpGet(uri);
+        return httpRequest(getBase);
+    }
+
+    /**
+     * GET方法获取数据
+     *
+     * @param uri URI
+     * @return
+     * @throws IOException
+     */
+    public static String get(String uri) throws IOException, URISyntaxException {
+        return get(new URI(uri));
+    }
+
+    private static String httpRequest(HttpUriRequest request) throws IOException {
         // 创建默认的httpClient实例
         final CloseableHttpClient httpClient = getHttpClient();
         CloseableHttpResponse httpResponse = null;
         try {
-            final HttpPost postBase = new HttpPost(uri);
-            postBase.setEntity(data);
-            httpResponse = httpClient.execute(postBase);
+            httpResponse = httpClient.execute(request);
             final HttpEntity entity = httpResponse.getEntity();
             if (null != entity) {
                 final int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -240,7 +270,7 @@ public class NetUtil {
             if (statusObj instanceof String) {
                 final String statusString = (String) statusObj;
                 if (!statusString.contains("success") && !"200".equals(statusString)) {
-                    throw new Exception("Entity of status(String) may be fail:" + statusString+ "\nReturn message:" + response);
+                    throw new Exception("Entity of status(String) may be fail:" + statusString + "\nReturn message:" + response);
                 }
             } else if (statusObj instanceof Number) {
                 final Number statusNumber = (Number) statusObj;
@@ -250,10 +280,10 @@ public class NetUtil {
                 }
             } else if (statusObj instanceof Boolean) {
                 if (!(Boolean) statusObj) {
-                    throw new Exception("Entity of status(Boolean) may be fail:" + ((Boolean) statusObj).toString()+ "\nReturn message:" + response);
+                    throw new Exception("Entity of status(Boolean) may be fail:" + ((Boolean) statusObj).toString() + "\nReturn message:" + response);
                 }
             } else {
-                throw new Exception("Entity of status(Any) can't be recognized:" + statusObj.toString()+ "\nReturn message:" + response);
+                throw new Exception("Entity of status(Any) can't be recognized:" + statusObj.toString() + "\nReturn message:" + response);
             }
         } else {
             throw new Exception("The field `status` not found. \nReturn message:" + response);

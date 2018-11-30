@@ -1,5 +1,7 @@
 package com.github.tsingjyujing.lofka.util;
 
+import org.apache.logging.log4j.core.util.IOUtils;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Properties;
@@ -96,4 +98,34 @@ public class FileUtil {
     public static String convert(InputStream inputStream) throws IOException {
         return convert(inputStream, Charset.forName("UTF-8"));
     }
+
+    /**
+     * 读取配置（从资源文件根目录中）
+     *
+     * @param textResourceName 配置文件名
+     * @return properties对象
+     */
+    public static String readTextResource(String textResourceName) throws IOException {
+        return IOUtils.toString(
+                new InputStreamReader(
+                        FileUtil.class.getResourceAsStream("/" + textResourceName)
+                )
+        );
+    }
+
+    /**
+     * 读取配置（默认从工作目录中的conf文件夹）
+     *
+     * @param textFileName 配置文件名
+     * @return properties对象
+     */
+    public static String readTextFile(String textFileName) throws IOException {
+        return IOUtils.toString(
+                new InputStreamReader(
+                        new FileInputStream("conf/" + textFileName)
+                )
+        );
+    }
+
 }
+

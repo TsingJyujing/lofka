@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.github.tsingjyujing</groupId>
         <artifactId>lofka-parent</artifactId>
-        <version>1.7</version>
+        <version>1.8-SNAPSHOT</version>
     </parent>
 
     <name>logger-server</name>
@@ -109,13 +109,6 @@
             <version>${kafka.client.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>bson</artifactId>
-            <version>3.6.3</version>
-        </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -125,6 +118,12 @@
         <dependency>
             <groupId>com.github.tsingjyujing</groupId>
             <artifactId>lofka-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tsingjyujing</groupId>
+            <artifactId>lofka-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
 

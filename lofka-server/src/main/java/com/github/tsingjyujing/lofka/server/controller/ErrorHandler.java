@@ -4,11 +4,13 @@ package com.github.tsingjyujing.lofka.server.controller;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,10 +35,11 @@ class ErrorHandler {
             value = Exception.class
     )
     @ResponseBody
-    public String defaultErrorHandler(HttpServletRequest req, Exception ex) {
+    public String defaultErrorHandler(HttpServletRequest req, HttpServletResponse resp, Exception ex) {
         Map<String, Object> errorInfo = new HashMap<>(16);
 
-        errorInfo.put("status", 100);
+        resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorInfo.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorInfo.put("message", ex.getMessage());
         errorInfo.put("data", new String[]{});
 

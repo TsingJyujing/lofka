@@ -18,7 +18,11 @@ import java.util.Map;
  */
 public class HttpAsyncAppender extends AppenderBase<ILoggingEvent> {
 
-    public BaseAsyncProcessor<Map> getProcessor() {
+    /**
+     * 创建消息处理器
+     * @return
+     */
+    private BaseAsyncProcessor<Map> getProcessor() {
         if (processor == null) {
             processor = new LoggerJsonAsyncAutoProcessor(
                     Constants.urlProcessing(

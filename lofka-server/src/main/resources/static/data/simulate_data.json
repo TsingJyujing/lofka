@@ -1,0 +1,348 @@
+[
+  {
+    "level": "DEBUG",
+    "app_name": "cvnavi/offline/cloudera/auto-ops",
+    "thread": "monitor-task-0",
+    "kafka_info": {
+      "partition": "logger-json",
+      "topic": "logger-json",
+      "offset": {
+        "$numberLong": "104733285"
+      }
+    },
+    "mdc": {},
+    "routers": [
+      "10.10.11.11"
+    ],
+    "message": "No Trust Decider for Conduit '{http://api.cloudera.com/}ApiRootResource.http-conduit'. An afirmative Trust Decision is assumed.",
+    "timestamp": 1541482931753.0,
+    "host": {
+      "name": "10.10.11.11",
+      "ip": "10.10.11.11"
+    },
+    "type": "LOG4J2X",
+    "logger": "org.apache.cxf.transport.http.HTTPConduit",
+    "stack_trace": [
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "makeTrustDecision",
+        "filename": "HTTPConduit.java",
+        "line": 1721.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleHeadersTrustCaching",
+        "filename": "HTTPConduit.java",
+        "line": 1268.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 1298.0
+      },
+      {
+        "class": "org.apache.cxf.transport.AbstractConduit",
+        "method": "close",
+        "filename": "AbstractConduit.java",
+        "line": 56.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 627.0
+      },
+      {
+        "class": "org.apache.cxf.interceptor.MessageSenderInterceptor$MessageSenderEndingInterceptor",
+        "method": "handleMessage",
+        "filename": "MessageSenderInterceptor.java",
+        "line": 62.0
+      },
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "doIntercept",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 272.0
+      },
+      {
+        "class": "org.apache.cxf.jaxrs.client.AbstractClient",
+        "method": "doRunInterceptorChain",
+        "filename": "AbstractClient.java",
+        "line": 633.0
+      }
+    ]
+  },
+  {
+    "level": "DEBUG",
+    "app_name": "cvnavi/offline/cloudera/auto-ops",
+    "thread": "monitor-task-0",
+    "kafka_info": {
+      "partition": "logger-json",
+      "topic": "logger-json",
+      "offset": {
+        "$numberLong": "104733286"
+      }
+    },
+    "mdc": {},
+    "routers": [
+      "10.10.11.11"
+    ],
+    "message": "Adding interceptor org.apache.cxf.jaxrs.client.spec.ClientResponseFilterInterceptor@35d26be to phase pre-protocol-frontend",
+    "timestamp": 1541482931792.0,
+    "host": {
+      "name": "10.10.11.11",
+      "ip": "10.10.11.11"
+    },
+    "type": "LOG4J2X",
+    "logger": "org.apache.cxf.phase.PhaseInterceptorChain",
+    "stack_trace": [
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "add",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 206.0
+      },
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "add",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 191.0
+      },
+      {
+        "class": "org.apache.cxf.jaxrs.client.AbstractClient",
+        "method": "setupInInterceptorChain",
+        "filename": "AbstractClient.java",
+        "line": 887.0
+      },
+      {
+        "class": "org.apache.cxf.jaxrs.client.ClientMessageObserver",
+        "method": "onMessage",
+        "filename": "ClientMessageObserver.java",
+        "line": 45.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponseInternal",
+        "filename": "HTTPConduit.java",
+        "line": 1606.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponse",
+        "filename": "HTTPConduit.java",
+        "line": 1502.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 1309.0
+      },
+      {
+        "class": "org.apache.cxf.transport.AbstractConduit",
+        "method": "close",
+        "filename": "AbstractConduit.java",
+        "line": 56.0
+      }
+    ]
+  },
+  {
+    "level": "DEBUG",
+    "app_name": "cvnavi/offline/cloudera/auto-ops",
+    "thread": "monitor-task-0",
+    "kafka_info": {
+      "partition": "logger-json",
+      "topic": "logger-json",
+      "offset": {
+        "$numberLong": "104733287"
+      }
+    },
+    "mdc": {},
+    "routers": [
+      "10.10.11.11"
+    ],
+    "message": "Chain org.apache.cxf.phase.PhaseInterceptorChain@24572eb0 was created. Current flow:\n  pre-protocol-frontend [ClientResponseFilterInterceptor]\n",
+    "timestamp": 1541482931794.0,
+    "host": {
+      "name": "10.10.11.11",
+      "ip": "10.10.11.11"
+    },
+    "type": "LOG4J2X",
+    "logger": "org.apache.cxf.phase.PhaseInterceptorChain",
+    "stack_trace": [
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "outputChainToLog",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 684.0
+      },
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "updateIterator",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 171.0
+      },
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "doIntercept",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 254.0
+      },
+      {
+        "class": "org.apache.cxf.jaxrs.client.ClientMessageObserver",
+        "method": "onMessage",
+        "filename": "ClientMessageObserver.java",
+        "line": 56.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponseInternal",
+        "filename": "HTTPConduit.java",
+        "line": 1606.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponse",
+        "filename": "HTTPConduit.java",
+        "line": 1502.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 1309.0
+      },
+      {
+        "class": "org.apache.cxf.transport.AbstractConduit",
+        "method": "close",
+        "filename": "AbstractConduit.java",
+        "line": 56.0
+      }
+    ]
+  },
+  {
+    "level": "DEBUG",
+    "app_name": "cvnavi/offline/cloudera/auto-ops",
+    "thread": "monitor-task-0",
+    "kafka_info": {
+      "partition": "logger-json",
+      "topic": "logger-json",
+      "offset": {
+        "$numberLong": "104733288"
+      }
+    },
+    "mdc": {},
+    "routers": [
+      "10.10.11.11"
+    ],
+    "message": "Invoking handleMessage on interceptor org.apache.cxf.jaxrs.client.spec.ClientResponseFilterInterceptor@35d26be",
+    "timestamp": 1541482931795.0,
+    "host": {
+      "name": "10.10.11.11",
+      "ip": "10.10.11.11"
+    },
+    "type": "LOG4J2X",
+    "logger": "org.apache.cxf.phase.PhaseInterceptorChain",
+    "stack_trace": [
+      {
+        "class": "org.apache.cxf.phase.PhaseInterceptorChain",
+        "method": "doIntercept",
+        "filename": "PhaseInterceptorChain.java",
+        "line": 269.0
+      },
+      {
+        "class": "org.apache.cxf.jaxrs.client.ClientMessageObserver",
+        "method": "onMessage",
+        "filename": "ClientMessageObserver.java",
+        "line": 56.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponseInternal",
+        "filename": "HTTPConduit.java",
+        "line": 1606.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "handleResponse",
+        "filename": "HTTPConduit.java",
+        "line": 1502.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 1309.0
+      },
+      {
+        "class": "org.apache.cxf.transport.AbstractConduit",
+        "method": "close",
+        "filename": "AbstractConduit.java",
+        "line": 56.0
+      },
+      {
+        "class": "org.apache.cxf.transport.http.HTTPConduit",
+        "method": "close",
+        "filename": "HTTPConduit.java",
+        "line": 627.0
+      },
+      {
+        "class": "org.apache.cxf.interceptor.MessageSenderInterceptor$MessageSenderEndingInterceptor",
+        "method": "handleMessage",
+        "filename": "MessageSenderInterceptor.java",
+        "line": 62.0
+      }
+    ]
+  },
+  {
+    "level": "DEBUG",
+    "app_name": "cvnavi/offline/cloudera/auto-ops",
+    "thread": "monitor-task-0",
+    "kafka_info": {
+      "partition": "logger-json",
+      "topic": "logger-json",
+      "offset": {
+        "$numberLong": "104733289"
+      }
+    },
+    "mdc": {},
+    "routers": [
+      "10.10.11.11"
+    ],
+    "message": "com.cvnavi.autoops.tasks.Monitor ran once normally.",
+    "timestamp": 1541482931797.0,
+    "host": {
+      "name": "10.10.11.11",
+      "ip": "10.10.11.11"
+    },
+    "type": "LOG4J2X",
+    "logger": "com.cvnavi.autoops.tasks.Monitor",
+    "stack_trace": [
+      {
+        "class": "com.cvnavi.autoops.basic.BaseClosableTimedTask",
+        "method": "run",
+        "filename": "BaseClosableTimedTask.java",
+        "line": 69.0
+      },
+      {
+        "class": "java.util.concurrent.ThreadPoolExecutor",
+        "method": "runWorker",
+        "filename": "ThreadPoolExecutor.java",
+        "line": 1149.0
+      },
+      {
+        "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
+        "method": "run",
+        "filename": "ThreadPoolExecutor.java",
+        "line": 624.0
+      },
+      {
+        "class": "java.lang.Thread",
+        "method": "run",
+        "filename": "Thread.java",
+        "line": 748.0
+      }
+    ]
+  }
+]

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lofka Console</title>
+    <link rel="icon" type="image/x-icon" href="/lofka/static/img/icon.png">
+    <script src="/lofka/static/js/lofka/console.js"></script>
+
+    <script src="/lofka/static/js/jquery-3.2.1.min.js"></script>
+
+    <link rel="stylesheet" href="/lofka/static/css/xterm.css"/>
+    <script src="/lofka/static/js/xterm/xterm.js"></script>
+    <script src="/lofka/static/js/lofka/terminal.js"></script>
+
+    <link rel="stylesheet" href="/lofka/static/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/lofka/static/css/bootstrap-theme.min.css"/>
+    <script src="/lofka/static/js/bootstrap.min.js"></script>
+
+
+    <!--代码编辑器-->
+    <link rel="stylesheet" href="/lofka/static/editor/lib/codemirror.css"/>
+    <script src="/lofka/static/editor/lib/codemirror.js"></script>
+
+    <!--JS代码高亮-->
+    <script src="/lofka/static/editor/mode/javascript/javascript.js"></script>
+
+    <!--引入css文件，用以支持主题-->
+    <link rel="stylesheet" href="/lofka/static/editor/theme/monokai.css"/>
+
+</head>
+<body>
+<br/>
+
+<div class="container-fluid" id="div_main">
+    <div class="row-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title"
+                     id="console-title"
+                >
+                    <label>
+                        控制台输出
+                    </label>
+
+                    <a class="btn btn-default pull-right"
+                       href="#"
+                       data-toggle="collapse"
+                       data-target="#console-body">--</a>
+                </div>
+            </div>
+            <div class="panel-body" id="console-body">
+                <div class="row-fluid">
+                    <div class="col-md-12" id="terminal">
+                        <!--端末-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="panel-title"
+                         id="setting-title"
+                    >
+                        <label>
+                            设定
+                        </label>
+
+                        <a class="btn btn-default pull-right"
+                           href="#"
+                           data-toggle="collapse"
+                           data-target="#setting-body">--</a>
+                    </div>
+                </div>
+                <div class="panel-body" id="setting-body">
+                    <div class="row-fluid">
+                        <div class="col-md-8">
+                            <label for="function_text_area">
+                                编辑 ECMAScript5 过滤函数：
+                            </label>
+                            <textarea
+                                    class="form-control"
+                                    id="function_text_area"
+                                    name="code"
+                            >function filter(log){return false;}</textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <br><br>
+                            <label for="console-line-height">请输入行数：</label>
+                            <input type="text" id="console-line-height">
+                            <a class="btn btn-primary btn-sm" href="#" onclick="set_console_height()">设置</a>
+                            <br>
+                            <br>
+                            <label>控制台控制</label><br/>
+                            <a class="btn btn-primary btn-large" href="#" onclick="clear_console()">清空控制台</a>
+                            &nbsp;
+                            <a class="btn btn-primary btn-large" href="#" onclick="control_accept()"
+                               id="btn-accept-control">忽略消息</a>
+                            <br>
+                            <br>
+                            <label>过滤函数</label><br/>
+                            <a class="btn btn-success btn-large" href="#" onclick="apply_function()">应用 &raquo;</a>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    let accept_data = true;
+    const editor = CodeMirror.fromTextArea(document.getElementById("function_text_area"), {
+        mode: "text/javascript",
+        lineNumbers: true,	//显示行号
+        theme: "monokai",	//设置主题
+        matchBrackets: true
+    });
+
+    const test_data = [];
+
+    $.getJSON(
+        "/lofka/static/data/simulate_data.json", function (data) {
+            data.forEach(
+                (datum) => {
+                    test_data.push(datum)
+                }
+            )
+        }
+    );
+
+    function test_function_on_data(func) {
+        test_data.forEach(
+            datum=>{
+                if(typeof(func(datum))!=="boolean"){
+                    throw Error("Function return is not boolean.")
+                }
+            }
+        );
+    }
+
+    const terminal = initialize_terminal("terminal");
+
+    /**
+     * 初始化终端
+     */
+    function initialize_terminal(container_id) {
+        const term = new Terminal();
+        term.open(document.getElementById(container_id));
+        fitTerminal(term);
+        return term;
+    }
+
+    const web_socket = initialize_web_socket(
+        get_web_socket_uri('/lofka/websocket/logs'),
+        terminal
+    );
+
+    function get_web_socket_uri(path) {
+        var protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+        var url = protocol + location.host;
+        if (location.hostname === 'localhost') {
+            url += '/' + location.pathname.split('/')[1]; // add context path
+        }
+        return url + path;
+    }
+
+    /**
+     * 初始化一个WebSocket
+     * @param address 地址，例如 ws://127.0.0.1:9500/lofka/websocket/logs
+     * @param term 终端，如果给console.log就输出到控制台
+     */
+    function initialize_web_socket(address, term) {
+
+        const ws = new WebSocket(address);
+
+        /**
+         * 连接打开的时候的动作
+         * @param evt
+         */
+        ws.onopen = function (evt) {
+            term.write("Connection established.\r\n");
+            //log['app_name']==='cvnavi/online/cloudera/auto-ops'
+            ws.send("function filter(log) {return false;}");
+            console.log(evt);
+        };
+
+        /**
+         * 消息处理
+         * @param event
+         */
+        ws.onmessage = function (event) {
+            if (accept_data) {
+                term.write(
+                    auto_format_message(
+                        JSON.parse(
+                            event.data
+                        )
+                    ).replace(/\n/g, "\r\n")
+                );
+                term.write("\r\n");
+            }
+
+        };
+
+        /**
+         * 错误输出
+         * @param event
+         */
+        ws.onerror = function (event) {
+            term.error("Error caught from WebSocket:");
+            term.error(JSON.stringify(event, null, 2).replace(/\n/g, "\r\n"));
+        };
+
+        /**
+         * 窗口关闭的时候的动作
+         * @param e
+         */
+        window.onbeforeunload = function (e) {
+            ws.close()
+        };
+
+        return ws;
+    }
+
+    /**
+     * 将函数转送到服务端
+     */
+    function apply_function() {
+        const function_text = editor.getValue();
+        eval(
+            function_text
+        );
+        test_function_on_data(filter);
+        terminal.clear();
+        web_socket.send(function_text);
+    }
+
+    /**
+     * 清除控制台
+     */
+    function clear_console() {
+        terminal.clear();
+    }
+
+    /**
+     * 控制显示数据
+     */
+    function control_accept() {
+        const button = $("#btn-accept-control");
+        if (accept_data) {
+            button.text("继续输出")
+        } else {
+            button.text("忽略消息")
+        }
+        accept_data = !accept_data;
+    }
+
+    /**
+     * 设置控制台高度
+     */
+    function set_console_height() {
+        terminal.resize(
+            terminal.cols,
+            parseInt(
+                $("#console-line-height").val()
+            )
+        );
+    }
+
+    $(() => {
+        $("#console-line-height").val(terminal.rows)
+    })
+</script>
+</body>
+</html>

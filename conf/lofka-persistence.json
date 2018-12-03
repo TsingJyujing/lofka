@@ -1,0 +1,27 @@
+[
+  {
+    "sourceType": "local",
+    "config": {
+      "register.name":"shard-local"
+    },
+    "processors": {
+      "mongodb-saver-0": {
+        "processorType": "mongodb",
+        "config": {
+          "mongodb.collection": "lofka",
+          "mongodb.database": "logger",
+          "mongodb.deprecate.time": "3600000",
+          "mongodb.expired.setting.DEBUG": "600000",
+          "mongodb.expired.setting.DEFAULT": "2678400000",
+          "mongodb.expired.setting.ERROR": "31622400000",
+          "mongodb.expired.setting.FATAL": "63244800000",
+          "mongodb.expired.setting.INFO": "86400000",
+          "mongodb.expired.setting.NGINX": "16416000000",
+          "mongodb.expired.setting.TRACE": "300000",
+          "mongodb.expired.setting.WARN": "2678400000",
+          "mongodb.servers": "name1:27017,name2:27017,data1:27017,data2:27017,data3:27017"
+        }
+      }
+    }
+  }
+]

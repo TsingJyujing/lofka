@@ -70,7 +70,7 @@ function get_linked_key_in_dict(x, k) {
     if (k.indexOf(".") < 0) {
         return x[k]
     } else {
-        const ks = k.split(".")
+        const ks = k.split(".");
         return get_linked_key_in_dict(x, ks.slice(1, ks.length));
     }
 }
@@ -170,27 +170,32 @@ function message_filter(log_data, filter_map) {
  */
 function message_formatter(log_data) {
     const time_formatted = format_datetime(log_data["timestamp"]);
-    const host_formatted = ("host" in log_data)?host_info_format(log_data["host"]):"Unknown host";
+    const host_formatted = ("host" in log_data) ? host_info_format(log_data["host"]) : "Unknown host";
+    var log_message = log_data["message"];
+    if (typeof(log_message) !== "string") {
+        log_message = "\n" + JSON.stringify(log_message, null, 2);
+    }
+
     let logger_output = `${time_formatted} [${
         LEVEL_COLOR[log_data["level"]](str_size_limit(
-            log_data["level"], 
-            limit_ahead=2, 
-            limit_after=3, 
-            padding=true, 
-            shrink_str="-"
+            log_data["level"],
+            limit_ahead = 2,
+            limit_after = 3,
+            padding = true,
+            shrink_str = "-"
         ))
         }] [${
-        LofkaColors.purple(str_size_limit(log_data["thread"], limit_ahead=4, limit_after=10, padding=true))
+        LofkaColors.purple(str_size_limit(log_data["thread"], limit_ahead = 4, limit_after = 10, padding = true))
         }] ${
-        LofkaColors.blue(str_size_limit(log_data["logger"], limit_ahead=4, limit_after=10, padding=true))
+        LofkaColors.blue(str_size_limit(log_data["logger"], limit_ahead = 4, limit_after = 10, padding = true))
         } [${
         LofkaColors.yellow(log_data["app_name"])
         }://${
         LofkaColors.cerulean(host_formatted)
         }]\t:${
-        LofkaColors.cerulean(log_data["message"])
+        LofkaColors.cerulean(log_message)
         }`;
-    if ("throwable" in log_data){
+    if ("throwable" in log_data) {
         logger_output += "\n" + throwable_info_formatter(log_data["throwable"]);
     }
     return logger_output;
@@ -248,17 +253,21 @@ function nginx_message_formatter(log_data) {
 }
 
 
-function auto_format_message(log_data){
-    try{
-        if("type" in log_data){
-            if ( log_data["type"].toUpperCase() ==="NGINX"){
+function auto_format_message(log_data) {
+    try {
+        if ("echo" in log_data) {
+            return "Function committed to server successfully:\n" + JSON.stringify(log_data, null, 2);
+        }
+        if ("type" in log_data) {
+            if (log_data["type"].toUpperCase() === "NGINX") {
                 return nginx_message_formatter(log_data);
             }
         }
         return message_formatter(log_data);
-    }catch(err){
+    } catch (err) {
         console.error(err);
         console.error(log_data);
-        return message_formatter_raw(log_data);
+        // return message_formatter_raw(log_data);
+        return "";
     }
 }

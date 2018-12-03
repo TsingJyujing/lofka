@@ -63,6 +63,9 @@ logger.topic=logger-json
 ```
 其中，`bootstrap.servers`和`logger.topic`一般随着目标Kafka的不同而不同。
 
+如果需要持久化到ElasticSearch中，请参考lofka-es-writer
+
+
 ##### Redirect转发配置
 该项作用为将收到的所有日志（异步地）推送到另一个Lofka服务器
 通过配置`lofka-redirect.properties`文件进行配置，没有这个配置文件或者配置文件错误就不会启动转发。

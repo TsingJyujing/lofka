@@ -5,6 +5,8 @@
 
 .idea
 *.iml
+venv
+
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -99,7 +101,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -225,11 +226,12 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
-将删除 lofka-console-py/.idea/inspectionProfiles/
-将删除 lofka-persistence/src/main/resources/
-将删除 lofka-python-utils/.idea/inspectionProfiles/
-将删除 lofka-tail-py/.idea/inspectionProfiles/
-/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml
-/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml.user
-/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml
-/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml.user
+lofka-console-py/.idea/inspectionProfiles/
+lofka-persistence/src/main/resources/
+lofka-python-utils/.idea/inspectionProfiles/
+lofka-tail-py/.idea/inspectionProfiles/
+lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml
+lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml.user
+lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml
+lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml.user
+.vs/

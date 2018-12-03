@@ -1,7 +1,7 @@
 package com.github.tsingjyujing.lofka.server.queue;
 
 import com.github.tsingjyujing.lofka.server.util.Constants;
-import com.github.tsingjyujing.lofka.server.util.FileUtil;
+import com.github.tsingjyujing.lofka.util.FileUtil;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +42,8 @@ public class MessageQueueCluster implements IMessageQueue {
         } catch (Exception ex) {
             LOGGER.info("Fail to load redirect Queue, may be not configured.");
         }
+        // 本地持久化工具配置
+        messageQueueMap.put("local", new LocalMessageQueue());
         // 如果有其他的转发配置也在这里
     }
 

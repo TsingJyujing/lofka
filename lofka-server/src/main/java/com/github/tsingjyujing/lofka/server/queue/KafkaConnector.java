@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * 消息队列连接器
+ * Kafka 消息队列连接器
  *
  * @author yuanyifan
  */
@@ -23,6 +23,11 @@ public class KafkaConnector implements IMessageQueue {
 
     private KafkaProducer<Integer, String> producer;
 
+    /**
+     * 读取什么样的Topic
+     * 这里设置的是默认值
+     * 真实值由`logger.topic`决定
+     */
     private String topicWrite = "logger-json";
 
     private final Random random = new Random(System.currentTimeMillis());
@@ -34,7 +39,7 @@ public class KafkaConnector implements IMessageQueue {
      */
     public KafkaConnector(Properties properties) {
         producer = createProducer(properties);
-        topicWrite = properties.getProperty("logger.topic", "logger-json");
+        topicWrite = properties.getProperty("logger.topic", topicWrite);
     }
 
 
@@ -50,17 +55,17 @@ public class KafkaConnector implements IMessageQueue {
 
     @Override
     public void pushQueue(String message) throws Exception {
-        pushMessageToTopicAsync(topicWrite,message);
+        pushMessageToTopicAsync(topicWrite, message);
     }
 
     /**
      * 直接向指定的Topic推送消息
      *
-     * @param topic
-     * @param message
+     * @param topic   写入哪个主题
+     * @param message 消息详情
      */
     public Future<RecordMetadata> pushMessageToTopicAsync(String topic, String message) {
-        return producer.send(
+        return getProducer().send(
                 new ProducerRecord<>(
                         topic,
                         random.nextInt(),

@@ -55,7 +55,8 @@ namespace Lofka.Dotnet.Common
                 }
                 var content = new ByteArrayContent(postData);
                 var response = await Client.PostAsync(target, content);
-                Console.WriteLine(Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+
+                Console.WriteLine(strPostData);
                 return response.IsSuccessStatusCode;
             }
             else

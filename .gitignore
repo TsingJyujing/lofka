@@ -229,3 +229,7 @@ buildNumber.properties
 将删除 lofka-persistence/src/main/resources/
 将删除 lofka-python-utils/.idea/inspectionProfiles/
 将删除 lofka-tail-py/.idea/inspectionProfiles/
+/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml
+/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAppender/Properties/PublishProfiles/FolderProfile.pubxml.user
+/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml
+/lofka-dotnet/src/Lofka.Dotnet/examples/Example.Log4net.HttpAsyncAppender/Properties/PublishProfiles/FolderProfile.pubxml.user

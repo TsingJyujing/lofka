@@ -11,7 +11,7 @@ namespace Lofka.Dotnet.Common
         /// <summary>
         /// 将时间转换为时间戳
         /// </summary>
-        /// <param name="time">要被转换的试试加</param>
+        /// <param name="time">要被转换的时间</param>
         /// <returns></returns>
         public static double ToTimestamp(this DateTime time) => time > utcZero ? (time - utcZero).TotalMilliseconds : 0;
 

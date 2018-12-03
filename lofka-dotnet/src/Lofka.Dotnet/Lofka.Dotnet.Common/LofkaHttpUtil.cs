@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lofka.Dotnet.Common
 {
@@ -42,7 +43,7 @@ namespace Lofka.Dotnet.Common
         /// <param name="strPostData">日志数据json字符串</param>
         /// <param name="isCompress">是否压缩</param>
         /// <returns>true:发送成功;false:失败</returns>
-        public async System.Threading.Tasks.Task<bool> PostDataAsync(string target, string strPostData, bool isCompress)
+        public async Task<bool> PostDataAsync(string target, string strPostData, bool isCompress)
         {
             if (!string.IsNullOrEmpty(strPostData.Trim()))
             {
@@ -54,7 +55,8 @@ namespace Lofka.Dotnet.Common
                 }
                 var content = new ByteArrayContent(postData);
                 var response = await Client.PostAsync(target, content);
-                Console.WriteLine(Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+
+                Console.WriteLine(strPostData);
                 return response.IsSuccessStatusCode;
             }
             else

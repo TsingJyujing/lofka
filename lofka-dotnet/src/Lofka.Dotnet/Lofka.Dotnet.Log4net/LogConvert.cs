@@ -22,7 +22,7 @@
             return  new LoggerInfo
             {
                 Message = @event.RenderedMessage,
-                TimeStamp = @event.TimeStamp.ToTimestamp(),
+                TimeStamp = @event.TimeStamp.ToUniversalTime().ToTimestamp(),
                 Level = @event.Level.Name.ToUpper(),
                 ThreadName = @event.ThreadName,
                 LoggerName = @event.LoggerName,

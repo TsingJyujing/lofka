@@ -6,12 +6,12 @@
         <Authors>James.Xin@outlook.comn</Authors>
         <Company>James.Xin@outlook.com</Company>
         <Product>Lofka.Dotnet</Product>
-        <Description>
-            lofka (https://github.com/TsingJyujing/lofka)是一套开源的日志集中管理的工具。
-            Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。
-        </Description>
-        <Version>0.0.1</Version>
-        <AssemblyVersion>0.0.1.0</AssemblyVersion>
+        <Description>lofka (https://github.com/TsingJyujing/lofka)是一套开源的日志集中管理的工具。
+Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。</Description>
+        <Version>0.0.5</Version>
+        <AssemblyVersion>0.0.5.0</AssemblyVersion>
+        <PackageReleaseNotes>增加.Net FarmeWork 4.0 / .Net FarmeWork 4.5 兼容适配</PackageReleaseNotes>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' =='netstandard2.0' ">
         <DefineConstants>NETSTANDARD20</DefineConstants>

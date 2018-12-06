@@ -1,15 +1,38 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="HttpUtil.cs~RF877907.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
+        <AssemblyName>Lofka.Dotnet.Common</AssemblyName>
+        <Authors>James.Xin@outlook.comn</Authors>
+        <Company>James.Xin@outlook.com</Company>
+        <Product>Lofka.Dotnet</Product>
+        <Description>
+            lofka (https://github.com/TsingJyujing/lofka)是一套开源的日志集中管理的工具。
+            Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。
+        </Description>
+        <Version>0.0.1</Version>
+        <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='netstandard2.0' ">
+        <DefineConstants>NETSTANDARD20</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='net45' ">
+        <DefineConstants>NET45</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='net40' ">
+        <DefineConstants>NET40</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+      <PackageReference Include="System.Net.Http">
+        <Version>4.3.4</Version>
+      </PackageReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <PackageReference Include="System.Net.Http">
+        <Version>4.3.4</Version>
+      </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    </ItemGroup>
 </Project>

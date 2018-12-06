@@ -122,7 +122,7 @@ public class NetUtil {
         return get(new URI(uri));
     }
 
-    private static String httpRequest(HttpUriRequest request) throws IOException {
+    public static String httpRequest(HttpUriRequest request) throws IOException {
         // 创建默认的httpClient实例
         final CloseableHttpClient httpClient = getHttpClient();
         CloseableHttpResponse httpResponse = null;

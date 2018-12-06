@@ -1,6 +1,15 @@
 package com.github.tsingjyujing.lofka.nightwatcher
 
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import java.util.Properties
+
+import com.github.tsingjyujing.lofka.nightwatcher.basic.IRichService
+import com.github.tsingjyujing.lofka.nightwatcher.service.{CommonProcessor, HeartbeatWriter, NginxProcessor}
+import com.github.tsingjyujing.lofka.nightwatcher.util.JsonDocumentSchema
+import com.github.tsingjyujing.lofka.util.FileUtil
+import com.google.common.collect.Lists
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09
+import org.bson.Document
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
@@ -16,6 +25,24 @@ object StreamingEntry {
       */
     def main(args: Array[String]): Unit = {
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+
+        // 日志数据源
+        val logSource: DataStream[Document] = env.addSource({
+            val properties: Properties = FileUtil.autoReadProperties("lofka-kafka-client.properties")
+            val topicList: java.util.List[String] = Lists.newArrayList(
+                properties.getProperty("kafka.topic", "logger-json").split(","): _*
+            )
+            new FlinkKafkaConsumer09[Document](topicList, new JsonDocumentSchema(), properties)
+        })
+
+
+        IndexedSeq[IRichService[Document]](
+            new CommonProcessor(),
+            new NginxProcessor(),
+            new HeartbeatWriter()
+        ).foreach(
+            _.richStreamProcessing(env, logSource)
+        )
 
         env.execute("LofkaStreaming")
     }

@@ -1,7 +1,7 @@
 package com.github.tsingjyujing.lofka.nightwatcher.engine.tool;
 
-import com.google.common.collect.Lists;
-import com.mongodb.*;
+import com.github.tsingjyujing.lofka.persistence.util.sink.MongoDBConnectionLoader;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
@@ -10,7 +10,6 @@ import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -99,22 +98,7 @@ public class MongoDBWrapper implements AutoCloseable {
     private void initialize() {
         if (!isInitialized) {
             try {
-                final MongoClientOptions options = MongoClientOptions.builder()
-                        .compressorList(Lists.newArrayList(MongoCompressor.createSnappyCompressor()))
-                        .build();
-
-                try {
-                    mongoDBConnection = new MongoClient(
-                            parseServerAddresses(properties.getProperty("servers", "localhost:27017")),
-                            parseAuthentication(properties.getProperty("auth")),
-                            options
-                    );
-                } catch (Exception ex) {
-                    mongoDBConnection = new MongoClient(
-                            parseServerAddresses(properties.getProperty("servers", "localhost:27017")),
-                            options
-                    );
-                }
+                mongoDBConnection = MongoDBConnectionLoader.createConnectionFromProperties(properties);
                 isInitialized = true;
                 LOGGER.info("MongoDBUtil has initialized successfully");
             } catch (Exception ex) {
@@ -123,47 +107,6 @@ public class MongoDBWrapper implements AutoCloseable {
         }
     }
 
-
-    /**
-     * Parse server configuration
-     *
-     * @param serverConfiguration Format: host1:port1,host2:port2,...,hostn:portn
-     * @return server addresses
-     */
-    private static List<ServerAddress> parseServerAddresses(String serverConfiguration) {
-        List<ServerAddress> hosts = Lists.newArrayList();
-        for (String subConfig : serverConfiguration.split(",")) {
-            String[] hostInfo = subConfig.split(":");
-            if (hostInfo.length == 1) {
-                hosts.add(new ServerAddress(hostInfo[0], 27017));
-            } else if (hostInfo.length == 2) {
-                hosts.add(new ServerAddress(hostInfo[0], Integer.parseInt(hostInfo[1])));
-            } else {
-                throw new RuntimeException("Invalid server address serverConfiguration:" + subConfig);
-            }
-        }
-        return hosts;
-    }
-
-    /**
-     * Parse authentic configuration
-     *
-     * @param authenticConfig Format: user:password@dbname
-     * @return MongoCredential
-     */
-    private static MongoCredential parseAuthentication(String authenticConfig) {
-        final String[] userInfo = authenticConfig.split(":");
-        if (userInfo.length == 2) {
-            final String userName = userInfo[0];
-            final String[] dbInfo = userInfo[1].split("@");
-            if (dbInfo.length == 2) {
-                final String dbName = dbInfo[1];
-                final char[] password = dbInfo[0].toCharArray();
-                return MongoCredential.createCredential(userName, dbName, password);
-            }
-        }
-        throw new RuntimeException("Invalid authentic config.");
-    }
 
     @Override
     public void close() throws Exception {

@@ -1,4 +1,12 @@
 /**
+ * 将任何值转换为字符串
+ * @param anyval 任何数值
+ */
+function str(anyval) {
+    return "" + anyval;
+}
+
+/**
  *
  * @param message 消息
  * @param foreground 前台色
@@ -135,7 +143,7 @@ function throwable_info_formatter(throwable) {
             }	(${
             LofkaColors.cerulean(get_or_default(stack, "filename", "NO FILE"))
             }#${
-            LofkaColors.blue(str(int(get_or_default(stack, "line", "-1"))))
+            LofkaColors.blue(str(get_or_default(stack, "line", "-1")))
             })`
     }).join("\n");
     const exception_msg = get_or_default(throwable, "message", "NO MESSAGE");

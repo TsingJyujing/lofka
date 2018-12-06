@@ -71,22 +71,7 @@ public class MongoDBConnectionLoader {
     private void initialize() {
         if (!isInitialized) {
             try {
-                final MongoClientOptions options = MongoClientOptions.builder()
-                        .compressorList(Lists.newArrayList(MongoCompressor.createSnappyCompressor()))
-                        .build();
-
-                try {
-                    mongoDBConnection = new MongoClient(
-                            parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
-                            parseAuthentication(properties.getProperty("mongodb.auth")),
-                            options
-                    );
-                } catch (Exception ex) {
-                    mongoDBConnection = new MongoClient(
-                            parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
-                            options
-                    );
-                }
+                mongoDBConnection = createConnectionFromProperties(properties);
                 isInitialized = true;
                 LOGGER.info("MongoDBUtil has initialized successfully");
             } catch (Exception ex) {
@@ -95,6 +80,29 @@ public class MongoDBConnectionLoader {
         }
     }
 
+    /**
+     * 从配置信息中创建 MongoDB 客户端连接
+     *
+     * @param properties 配置信息
+     * @return
+     */
+    public static MongoClient createConnectionFromProperties(Properties properties) {
+        final MongoClientOptions options = MongoClientOptions.builder()
+                .compressorList(Lists.newArrayList(MongoCompressor.createSnappyCompressor()))
+                .build();
+        try {
+            return new MongoClient(
+                    parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
+                    parseAuthentication(properties.getProperty("mongodb.auth")),
+                    options
+            );
+        } catch (Exception ex) {
+            return new MongoClient(
+                    parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
+                    options
+            );
+        }
+    }
 
     /**
      * Parse server configuration
@@ -102,7 +110,7 @@ public class MongoDBConnectionLoader {
      * @param serverConfiguration Format: host1:port1,host2:port2,...,hostn:portn
      * @return server addresses
      */
-    private static List<ServerAddress> parseServerAddresses(String serverConfiguration) {
+    public static List<ServerAddress> parseServerAddresses(String serverConfiguration) {
         List<ServerAddress> hosts = Lists.newArrayList();
         for (String subConfig : serverConfiguration.split(",")) {
             String[] hostInfo = subConfig.split(":");
@@ -123,7 +131,7 @@ public class MongoDBConnectionLoader {
      * @param authenticConfig Format: user:password@dbname
      * @return MongoCredential
      */
-    private static MongoCredential parseAuthentication(String authenticConfig) {
+    public static MongoCredential parseAuthentication(String authenticConfig) {
         final String[] userInfo = authenticConfig.split(":");
         if (userInfo.length == 2) {
             final String userName = userInfo[0];

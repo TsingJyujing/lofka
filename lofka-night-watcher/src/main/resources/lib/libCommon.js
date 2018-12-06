@@ -19,7 +19,7 @@
  * @type {string}
  * @private
  */
-__TOOL_JAVA_CLASS_PATH = "com.cvnavi.streaming.engine.tool";
+__TOOL_JAVA_CLASS_PATH = "com.github.tsingjyujing.lofka.nightwatcher.engine.tool";
 
 /**
  * JAVA工具类的类型

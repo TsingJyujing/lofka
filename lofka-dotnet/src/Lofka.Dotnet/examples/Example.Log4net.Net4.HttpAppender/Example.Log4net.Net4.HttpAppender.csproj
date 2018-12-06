@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5F292A3B-4090-480C-9B45-95A1806D1E26}</ProjectGuid>
+    <ProjectGuid>{4A78E6E2-2692-4524-B2C8-94C6ABA8AECF}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Example.Log4net.Net4.HttpAsyncAppender</RootNamespace>
-    <AssemblyName>Example.Log4net.Net4.HttpAsyncAppender</AssemblyName>
+    <RootNamespace>Example.Log4net.Net4.HttpAppender</RootNamespace>
+    <AssemblyName>Example.Log4net.Net4.HttpAppender</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -54,11 +54,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lofka.Dotnet.Common\Lofka.Dotnet.Common.csproj">
+    <ProjectReference Include="..\..\Lofka.Dotnet.Common\Lofka.Dotnet.Common.csproj">
       <Project>{4916ec15-6737-44cb-95c8-eb7dbad7539a}</Project>
       <Name>Lofka.Dotnet.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lofka.Dotnet.Log4net\Lofka.Dotnet.Log4net.csproj">
+    <ProjectReference Include="..\..\Lofka.Dotnet.Log4net\Lofka.Dotnet.Log4net.csproj">
       <Project>{c27e258b-e23b-47cf-a0d3-7ebe1327605c}</Project>
       <Name>Lofka.Dotnet.Log4net</Name>
     </ProjectReference>

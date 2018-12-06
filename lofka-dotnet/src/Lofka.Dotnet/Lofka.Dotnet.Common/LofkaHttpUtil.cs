@@ -121,7 +121,7 @@ namespace Lofka.Dotnet.Common
                 var response = request.GetResponse() as HttpWebResponse;
                 return response.StatusCode==HttpStatusCode.OK;
 	        }
-	        catch
+	        catch (Exception ex)
 	        {
                 return false;
 	        }

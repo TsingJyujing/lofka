@@ -28,7 +28,10 @@ public class EngineManager implements AutoCloseable {
 
     volatile private static EngineManager ourInstance = null;
 
-    private final HashMap<ConsulConnectInfo, EngineSession> engineSessions = Maps.newHashMap();
+    /**
+     * Config file URL -> Engine session
+     */
+    private final HashMap<String, EngineSession> engineSessions = Maps.newHashMap();
 
     /**
      * 获取经过实例化的单例，向毛主席保证线程安全
@@ -74,15 +77,15 @@ public class EngineManager implements AutoCloseable {
     /**
      * 通过连接信息获取执行引擎
      *
-     * @param key 连接信息
+     * @param url 连接信息
      * @return 连接会话
      */
-    public EngineSession getEngines(ConsulConnectInfo key) throws URISyntaxException {
+    public EngineSession getEngines(String url) throws URISyntaxException {
         synchronized (engineSessions) {
-            if (!engineSessions.containsKey(key)) {
-                engineSessions.put(key, new EngineSession(key));
+            if (!engineSessions.containsKey(url)) {
+                engineSessions.put(url, new EngineSession(url));
             }
-            return engineSessions.get(key);
+            return engineSessions.get(url);
         }
     }
 
@@ -98,16 +101,12 @@ public class EngineManager implements AutoCloseable {
     public class EngineSession extends BaseNetAutoReloader {
 
         private final HashMap<String, NetReloadJavaScriptEngine> engines = Maps.newHashMap();
-        private final ConsulConnectInfo consulConnectInfo;
 
-        public EngineSession(ConsulConnectInfo consulConnectInfo) throws URISyntaxException {
+        public EngineSession(String configUrl) throws URISyntaxException {
             super(
-                    consulConnectInfo.createConsulClient().generateUriByPath(
-                            consulConnectInfo.getPath() + "scripts/config.json"
-                    ),
+                    new URI(configUrl),
                     watchSeconds * 1000
             );
-            this.consulConnectInfo = consulConnectInfo;
         }
 
         /**
@@ -147,26 +146,22 @@ public class EngineManager implements AutoCloseable {
         @Override
         protected void reload(String newValue) {
             LOGGER.info("(Re)Loading engines....");
-            final Set<String> fileNames = Sets.newHashSet(
+            final Set<String> scriptUrls = Sets.newHashSet(
                     ((ArrayList<String>) new Gson().fromJson(
                             newValue,
                             new TypeToken<ArrayList<String>>() {
                             }.getType()
-                    )).stream().map(
-                            filename -> consulConnectInfo.getPath() + "scripts/" + filename
-                    ).iterator()
+                    ))
             );
-            LOGGER.info("There're {} script(s) attempted to run.", fileNames.size());
+            LOGGER.info("There're {} script(s) attempted to run.", scriptUrls.size());
             synchronized (engines) {
-                for (String fileName : fileNames) {
-                    if (!engines.containsKey(fileName)) {
+                for (String url : scriptUrls) {
+                    if (!engines.containsKey(url)) {
                         try {
                             engines.put(
-                                    fileName,
+                                    url,
                                     new NetReloadJavaScriptEngine(
-                                            new URI(
-                                                    consulConnectInfo.getPath() + "scripts/" + fileName
-                                            ),
+                                            new URI(url),
                                             watchSeconds * 1000
                                     )
                             );
@@ -177,7 +172,7 @@ public class EngineManager implements AutoCloseable {
                 }
                 Set<String> currentFileNames = Sets.newHashSet(engines.keySet());
                 for (String fileName : currentFileNames) {
-                    if (!fileNames.contains(fileName)) {
+                    if (!scriptUrls.contains(fileName)) {
                         engines.remove(fileName);
                     }
                 }

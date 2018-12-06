@@ -130,7 +130,7 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
                     )
                 }
             }
-        )
+        ).name(s"$collectionPrefix-$aggregateTime-sliding-statistics")
 
     }
 
@@ -185,7 +185,7 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
                     coll.insertOne(doc)
                 }
             }
-        )
+        ).name(s"$collectionPrefix-$aggregateTime-window-statistics")
         aggregatedStream.map(_.value)
     }
 

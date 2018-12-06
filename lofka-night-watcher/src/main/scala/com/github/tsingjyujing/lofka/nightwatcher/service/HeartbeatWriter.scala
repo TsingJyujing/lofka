@@ -43,8 +43,6 @@ class HeartbeatWriter extends IRichService[Document] {
                 "logger", "heartbeat"
             ) {
 
-                val option: FindOneAndUpdateOptions = new FindOneAndUpdateOptions()
-                    .upsert(true)
 
                 override def invoke(value: Document, context: SinkFunction.Context[_]): Unit = {
                     coll.findOneAndUpdate(
@@ -55,11 +53,12 @@ class HeartbeatWriter extends IRichService[Document] {
                         DocumentUtil.Doc(
                             "$set" -> value
                         ),
-                        option
+                        new FindOneAndUpdateOptions()
+                            .upsert(true)
                     )
                 }
             }
-        )
+        ).name("heartbeat-update")
     }
 }
 

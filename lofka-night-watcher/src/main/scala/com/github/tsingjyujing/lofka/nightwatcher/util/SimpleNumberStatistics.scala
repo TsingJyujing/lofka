@@ -43,12 +43,12 @@ case class SimpleNumberStatistics(minValue: Double, maxValue: Double, sumValue: 
     )
 
     /**
-      * 获取方差
+      * 流式状态更新方式获取方差
       *
       * @return
       */
     def variance: Double = if (count > 1) {
-        (sumSquaredValue + average * average - 2 * sumValue) / (count - 1)
+        (sumSquaredValue - average * average * count) / (count - 1)
     } else {
         Double.NaN
     }
@@ -109,7 +109,8 @@ object SimpleNumberStatistics {
     def apply(numbers: Iterable[Double]): SimpleNumberStatistics = new SimpleNumberStatistics(
         numbers.min,
         numbers.max,
-        numbers.sum, numbers.map(x => x * x).sum,
+        numbers.sum,
+        numbers.map(x => x * x).sum,
         numbers.size
     )
 }

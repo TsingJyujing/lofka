@@ -6,7 +6,7 @@ import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironm
   *
   * @tparam T 数据类型
   */
-trait IRichService[T] {
+trait IRichService[T] extends Serializable{
 
     /**
       * 处理带有初始化信息和配置的流

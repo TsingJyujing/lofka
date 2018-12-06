@@ -1,6 +1,7 @@
 package com.github.tsingjyujing.lofka.util;
 
-import org.apache.logging.log4j.core.util.IOUtils;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -107,9 +108,7 @@ public class FileUtil {
      */
     public static String readTextResource(String textResourceName) throws IOException {
         return IOUtils.toString(
-                new InputStreamReader(
-                        FileUtil.class.getResourceAsStream("/" + textResourceName)
-                )
+                FileUtil.class.getResourceAsStream("/" + textResourceName), "UTF-8"
         );
     }
 
@@ -121,9 +120,7 @@ public class FileUtil {
      */
     public static String readTextFile(String textFileName) throws IOException {
         return IOUtils.toString(
-                new InputStreamReader(
-                        new FileInputStream("conf/" + textFileName)
-                )
+                new FileInputStream("conf/" + textFileName), "UTF-8"
         );
     }
 

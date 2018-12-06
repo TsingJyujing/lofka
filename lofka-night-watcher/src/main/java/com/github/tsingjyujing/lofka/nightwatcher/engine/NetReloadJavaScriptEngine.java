@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,9 +24,12 @@ import java.util.function.Function;
  */
 public class NetReloadJavaScriptEngine extends BaseNetAutoReloader {
 
+    private final static String ENGINE_NOT_LOADED = "Engine hasn't initialized.";
+
     protected Logger LOGGER = LoggerFactory.getLogger(NetReloadJavaScriptEngine.class);
 
     private NashornScriptEngine engine;
+
     /**
      * 使用引擎
      *
@@ -88,6 +90,9 @@ public class NetReloadJavaScriptEngine extends BaseNetAutoReloader {
     public Optional<String> processData(String data) {
         engineLock.lock();
         try {
+            if (engine == null) {
+                throw new RuntimeException(ENGINE_NOT_LOADED);
+            }
             final Object result = engine.invokeFunction("processing_data", data);
             if (result != null) {
                 if (result instanceof String) {
@@ -100,7 +105,11 @@ public class NetReloadJavaScriptEngine extends BaseNetAutoReloader {
                 return Optional.<String>empty();
             }
         } catch (Throwable ex) {
-            LOGGER.error("Error while running function", ex);
+            if (ENGINE_NOT_LOADED.equals(ex.getMessage())) {
+                //pass
+            } else {
+                LOGGER.error("Error while running function", ex);
+            }
             return Optional.<String>empty();
         } finally {
             engineLock.unlock();

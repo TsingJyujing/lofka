@@ -142,7 +142,11 @@ namespace Lofka.Dotnet.Log4net
                         Thread.Sleep(1000);
                     }
                     times++;
+#if NET40
+                    isComplete=httpUtil.PostData(target, jsonData, isCompress);
+#else
                     isComplete = httpUtil.PostDataAsync(target, jsonData, isCompress).Result;
+#endif
 
                 } while (!isComplete && times <= 3);//如果失败尝试3次
             }

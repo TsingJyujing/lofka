@@ -1,8 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
+#if NET45 || NETSTANDARD20
 using System.Net.Http;
+#endif
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lofka.Dotnet.Common
 {
@@ -16,8 +20,11 @@ namespace Lofka.Dotnet.Common
         /// </summary>
         public LofkaHttpUtil()
         {
+#if NET45 || NETSTANDARD20
             Client = new HttpClient();
             Client.DefaultRequestHeaders.Connection.Add("keep-alive");
+#endif
+            ServicePointManager.DefaultConnectionLimit = 512;
         }
         /// <summary>
         /// 构造函数
@@ -30,7 +37,18 @@ namespace Lofka.Dotnet.Common
         /// <summary>
         /// http客户端的BaseAddress
         /// </summary>
-        public Uri BaseUri { set { Client.BaseAddress = value; } }
+        public Uri BaseUri
+        {
+#if NET45 || NETSTANDARD20
+            set
+            {
+                Client.BaseAddress = value;
+            }
+#elif NET40
+            set; private get;
+#endif
+        }
+#if NET45 || NETSTANDARD20
         /// <summary>
         /// http客户端
         /// </summary>
@@ -42,7 +60,7 @@ namespace Lofka.Dotnet.Common
         /// <param name="strPostData">日志数据json字符串</param>
         /// <param name="isCompress">是否压缩</param>
         /// <returns>true:发送成功;false:失败</returns>
-        public async System.Threading.Tasks.Task<bool> PostDataAsync(string target, string strPostData, bool isCompress)
+        public async Task<bool> PostDataAsync(string target, string strPostData, bool isCompress)
         {
             if (!string.IsNullOrEmpty(strPostData.Trim()))
             {
@@ -54,7 +72,8 @@ namespace Lofka.Dotnet.Common
                 }
                 var content = new ByteArrayContent(postData);
                 var response = await Client.PostAsync(target, content);
-                Console.WriteLine(Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync()));
+
+                //Console.WriteLine(strPostData);
                 return response.IsSuccessStatusCode;
             }
             else
@@ -63,6 +82,53 @@ namespace Lofka.Dotnet.Common
                 return true;
             }
         }
+#elif NET40
+        private HttpWebRequest request;
+        /// <summary>
+        /// 向服务器发送日志数据
+        /// </summary>
+        /// <param name="target">目标</param>
+        /// <param name="strPostData">日志数据json字符串</param>
+        /// <param name="isCompress">是否压缩</param>
+        /// <returns>true:发送成功;false:失败</returns>
+        public bool PostData(string target, string strPostData, bool isCompress)
+        {
+            try 
+	        {	        
+		        var url=new Uri(BaseUri,target).ToString();
+                if (BaseUri.ToString().StartsWith("https",StringComparison.OrdinalIgnoreCase))
+	            {
+                    request=WebRequest.Create(url) as HttpWebRequest;
+	            }
+                else
+	            {
+                    request=HttpWebRequest.Create(url) as HttpWebRequest;
+	            }
+                request.Method="POST";
+                request.Headers.Add("Accept-Charset","utf-8");
+                //request.Connection="keep-alive";
+                //request.Headers.Add("Connection","keep-alive");
+                var postData = Encoding.UTF8.GetBytes(strPostData);
+                if (isCompress)
+	            {
+                    request.Headers.Add("Accept-Encoding","gzip");
+                    postData = CompressData(postData);
+	            }
+                request.ContentLength=postData.Length;
+                using(var stream=request.GetRequestStream())
+	            {
+                    stream.Write(postData,0,postData.Length);
+	            }
+                var response = request.GetResponse() as HttpWebResponse;
+                return response.StatusCode==HttpStatusCode.OK;
+	        }
+	        catch (Exception ex)
+	        {
+                Console.WriteLine(ex.Message);
+                return false;
+	        }
+        }
+#endif
         /// <summary>
         /// 压缩数据
         /// </summary>
@@ -72,7 +138,7 @@ namespace Lofka.Dotnet.Common
         {
             using (var stream = new MemoryStream())
             {
-                using (var gzipStream = new GZipStream(stream, CompressionMode.Compress,false))
+                using (var gzipStream = new GZipStream(stream, CompressionMode.Compress, false))
                 {
                     gzipStream.Write(original, 0, original.Length);
                 }

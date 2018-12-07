@@ -1,15 +1,33 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
+        <Version>0.0.5</Version>
+        <PackageId>Lofka.Log4net</PackageId>
+        <Authors>James.Xin@outlook.com</Authors>
+        <Product>Lofka.Log4net</Product>
+        <Description>lofka (https://github.com/TsingJyujing/lofka)是一套开源的日志集中管理的工具。
+ Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。</Description>
+        <AssemblyVersion>0.0.5.0</AssemblyVersion>
+        <AssemblyName>Lofka.Log4net</AssemblyName>
+        <PackageReleaseNotes>增加.Net FarmeWork 4.0 / .Net FarmeWork 4.5 兼容适配</PackageReleaseNotes>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='netstandard2.0' ">
+        <DefineConstants>NETSTANDARD20</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='net45' ">
+        <DefineConstants>NET45</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' =='net40' ">
+        <DefineConstants>NET40</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="log4net" Version="2.0.8" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lofka.Dotnet.Common\Lofka.Dotnet.Common.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Lofka.Dotnet.Common\Lofka.Dotnet.Common.csproj" />
+    </ItemGroup>
 
 </Project>

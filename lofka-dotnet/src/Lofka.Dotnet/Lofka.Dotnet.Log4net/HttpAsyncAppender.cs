@@ -7,6 +7,7 @@ namespace Lofka.Dotnet.Log4net
     using Common;
     using Common.Entites;
     using Newtonsoft.Json;
+    using System.Collections.Concurrent;
     using System.Threading;
 
     /// <summary>
@@ -84,7 +85,9 @@ namespace Lofka.Dotnet.Log4net
         /// <summary>
         /// 日志缓存
         /// </summary>
-        private readonly List<LoggerInfo> logBuffer = new List<LoggerInfo>();
+        //private readonly List<LoggerInfo> logBuffer = new List<LoggerInfo>();
+
+        private readonly BlockingCollection<LoggerInfo> logBuffer = new BlockingCollection<LoggerInfo>();
         /// <summary>
         /// 
         /// </summary>
@@ -93,15 +96,11 @@ namespace Lofka.Dotnet.Log4net
         {
             if (loggingEvent != null)
             {
-                lock (logBuffer)
+                logBuffer.Add(loggingEvent.ToLoggerInfo(Application));
+                if (logBuffer.Count > MaxSize)
                 {
-                    logBuffer.Add(loggingEvent.ToLoggerInfo(Application));
-                    if (logBuffer.Count > MaxSize)
-                    {
-                        PushToServer();
-                    }
+                    PushToServer();
                 }
-
             }
         }
         /// <summary>
@@ -111,15 +110,17 @@ namespace Lofka.Dotnet.Log4net
         {
             string jsonData = string.Empty;
             lastPushTime = DateTime.Now;
-            lock (logBuffer)
+            if (logBuffer.Count <= 0)
             {
-                if (logBuffer.Count <= 0)
-                {
-                    return;
-                }
-                jsonData = JsonConvert.SerializeObject(logBuffer);
-                logBuffer.Clear();
+                return;
             }
+            var lst = new List<LoggerInfo>();
+            for (int i = 0; i < logBuffer.Count; i++)
+            {
+                lst.Add(logBuffer.Take());
+            }
+            jsonData = JsonConvert.SerializeObject(lst);
+            //logBuffer.Clear();
             if (!string.IsNullOrEmpty(jsonData))
             {
                 if (httpUtil is null)
@@ -142,7 +143,11 @@ namespace Lofka.Dotnet.Log4net
                         Thread.Sleep(1000);
                     }
                     times++;
+#if NET40
+                    isComplete=httpUtil.PostData(target, jsonData, isCompress);
+#else
                     isComplete = httpUtil.PostDataAsync(target, jsonData, isCompress).Result;
+#endif
 
                 } while (!isComplete && times <= 3);//如果失败尝试3次
             }

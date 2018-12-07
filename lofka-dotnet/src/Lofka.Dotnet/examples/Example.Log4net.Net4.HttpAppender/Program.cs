@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace Example.Log4net.HttpAsyncAppender
+namespace Example.Log4net.Net4.HttpAppender
 {
     class Program
     {
@@ -13,15 +13,18 @@ namespace Example.Log4net.HttpAsyncAppender
         {
             Thread.CurrentThread.Name = "main";
             var configFile = new FileInfo("log4net.config");
-            var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
+            var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAppender));//加载Lofka.Dotnet.Log4net应用程序集
             var repository = LogManager.GetRepository(assembly);
-            XmlConfigurator.Configure(repository, configFile);//初始化配置
+            var col = XmlConfigurator.Configure(repository, configFile);//初始化配置
             var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-            for (int i = 0; i < 1000; i++)
+            log.Info("Hello,this is Example");
+            try
             {
-                log.Info("I'm INFO log...");
-                log.Error("I'm ERROR log...");
-                Console.WriteLine(i);
+                var val = int.Parse("abc");
+            }
+            catch (FormatException ex)
+            {
+                log.Error("Error!", ex);
             }
             Console.ReadLine();
         }

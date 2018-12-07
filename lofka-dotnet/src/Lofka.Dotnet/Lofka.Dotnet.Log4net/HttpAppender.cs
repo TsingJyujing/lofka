@@ -1,8 +1,5 @@
 ﻿using log4net.Appender;
 using log4net.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lofka.Dotnet.Log4net
 {
@@ -48,8 +45,8 @@ namespace Lofka.Dotnet.Log4net
             {
                 CreateHttpUtil();
             }
-            var loginfo= loggingEvent.ToLoggerInfo(Application);
-            if (loginfo!=null)
+            var loginfo = loggingEvent.ToLoggerInfo(Application);
+            if (loginfo != null)
             {
                 var jsonData = loginfo.ToJson();
                 var times = 0;
@@ -61,11 +58,15 @@ namespace Lofka.Dotnet.Log4net
                         Thread.Sleep(1000);
                     }
                     times++;
+#if NET40
+                    isComplete=httpUtil.PostData(Target, jsonData, IsCompress);
+#else
                     isComplete = httpUtil.PostDataAsync(Target, jsonData, IsCompress).Result;
+#endif
 
                 } while (!isComplete && times <= 3);//如果失败尝试3次
             }
-            
+
 
         }
         /// <summary>

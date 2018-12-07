@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 #if NET45 || NETSTANDARD20
 using System.Net.Http;
-#elif NET40
-using System.Net;
 #endif
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +24,7 @@ namespace Lofka.Dotnet.Common
             Client = new HttpClient();
             Client.DefaultRequestHeaders.Connection.Add("keep-alive");
 #endif
+            ServicePointManager.DefaultConnectionLimit = 512;
         }
         /// <summary>
         /// 构造函数
@@ -39,7 +39,6 @@ namespace Lofka.Dotnet.Common
         /// </summary>
         public Uri BaseUri
         {
-
 #if NET45 || NETSTANDARD20
             set
             {
@@ -74,7 +73,7 @@ namespace Lofka.Dotnet.Common
                 var content = new ByteArrayContent(postData);
                 var response = await Client.PostAsync(target, content);
 
-                Console.WriteLine(strPostData);
+                //Console.WriteLine(strPostData);
                 return response.IsSuccessStatusCode;
             }
             else
@@ -107,6 +106,8 @@ namespace Lofka.Dotnet.Common
 	            }
                 request.Method="POST";
                 request.Headers.Add("Accept-Charset","utf-8");
+                //request.Connection="keep-alive";
+                //request.Headers.Add("Connection","keep-alive");
                 var postData = Encoding.UTF8.GetBytes(strPostData);
                 if (isCompress)
 	            {
@@ -121,8 +122,9 @@ namespace Lofka.Dotnet.Common
                 var response = request.GetResponse() as HttpWebResponse;
                 return response.StatusCode==HttpStatusCode.OK;
 	        }
-	        catch //(Exception ex)
+	        catch (Exception ex)
 	        {
+                Console.WriteLine(ex.Message);
                 return false;
 	        }
         }

@@ -2,7 +2,9 @@ package com.github.tsingjyujing.lofka.nightwatcher.service
 
 import com.github.tsingjyujing.lofka.nightwatcher.basic.{IRichService, Keyable, KeyableStatisticable, ValuedWindow}
 import com.github.tsingjyujing.lofka.nightwatcher.sink.BaseMongoDBSink
+import com.github.tsingjyujing.lofka.nightwatcher.util.DocumentUtil
 import com.github.tsingjyujing.lofka.util.FileUtil
+import com.mongodb.client.MongoCollection
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.scala.function.{ProcessAllWindowFunction, ProcessWindowFunction}
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
@@ -173,6 +175,30 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
                 FileUtil.autoReadProperties("lofka-statistics-mongo.properties"),
                 "logger", collectionName
             ) {
+
+                /**
+                  * 数据库的准备阶段
+                  *
+                  * @param collection
+                  */
+                override def prepare(collection: MongoCollection[Document]): Unit = {
+                    collection.createIndex(DocumentUtil.Doc(
+                        "window_start" -> 1
+                    ))
+
+                    collection.createIndex(DocumentUtil.Doc(
+                        "window_end" -> 1
+                    ))
+
+                    collection.createIndex(DocumentUtil.Doc(
+                        "window_size" -> 1
+                    ))
+
+                    collection.createIndex(DocumentUtil.Doc(
+                        "app_name" -> 1
+                    ))
+                }
+
                 override def invoke(value: ValuedWindow[KeyableStatisticable[Keyable[String]]], context: SinkFunction.Context[_]): Unit = {
                     val staticalResult: KeyableStatisticable[Keyable[String]] = value.value
                     val doc = staticalResult.key.toDocument

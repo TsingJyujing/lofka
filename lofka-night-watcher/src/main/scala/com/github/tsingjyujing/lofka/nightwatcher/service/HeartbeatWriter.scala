@@ -5,6 +5,7 @@ import com.github.tsingjyujing.lofka.nightwatcher.sink.BaseMongoDBSink
 import com.github.tsingjyujing.lofka.nightwatcher.util.DocumentUtil
 import com.github.tsingjyujing.lofka.nightwatcher.util.DocumentUtil.Doc
 import com.github.tsingjyujing.lofka.util.FileUtil
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.scala.{DataStream, _}
@@ -43,6 +44,18 @@ class HeartbeatWriter extends IRichService[Document] {
                 "logger", "heartbeat"
             ) {
 
+
+                /**
+                  * 数据库的准备阶段
+                  *
+                  * @param collection
+                  */
+                override def prepare(collection: MongoCollection[Document]): Unit = {
+                    collection.createIndex(DocumentUtil.Doc(
+                        "app_name" -> 1,
+                        "heartbeat_name" -> 1
+                    ))
+                }
 
                 override def invoke(value: Document, context: SinkFunction.Context[_]): Unit = {
                     coll.findOneAndUpdate(

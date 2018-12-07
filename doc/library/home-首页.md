@@ -10,27 +10,6 @@ Lofka = **Lo**gger + Ka**fka**
 
 其架构设计，日志数据规范和参见[Wiki](https://github.com/TsingJyujing/lofka/wiki)
 
-其设计思路最早来源于[RobertStewart/log4mongo-java](https://github.com/RobertStewart/log4mongo-java)，后来本人在其基础上做了一版[ShinonomeLaboratory/log4mongo-java](https://github.com/ShinonomeLaboratory/log4mongo-java)。
-
-最早做这个的动机是希望使用MongoDB存储非结构化文档和TTL（过期删除）的特性做日志持久化。
-
-目前只支持Java和Python，其中：
-
-- Java支持：Log4j(1.x/2.x) Logback
-- Python支持：原生日志系统
-
-但是这个收集器存在：
-
-1. 不能开放处理流数据的接口；
-2. 对代码的侵入较深；
-3. 需要开放数据库，不是很安全。
-
-等问题，最后考虑使用Http/Socket（当然最后发现Socket很坑爹）接收日志，统一存放到Kafka（或者其他消息队列）中，再从Kafka中消费数据持久化到任意数据库（只实现了MongoDB）。
-
-后来的设计越改越骚，加入了批量接口，随后又给批量和单个日志的接口加了Gzip压缩功能，lofka-utils加入了心跳包，同步日志发送器改为异步发送器，加入了转发服务器这种东西。
-
-在lofka-console里面，也加入了由命令行参数生成mongodb aggregate pipeline和JavaScript Function，还给服务端加上了JS引擎用来做服务端过滤。
-
 ## 开源说明
 
 ### 开源的原因
@@ -94,3 +73,29 @@ Python写的部分：
 - lofka-console-py 一个Python语言开发的、输出优美的日志控制台
 - lofka-mongo-writer 日志服务器持久化工具，将队列中的数据持久化到MongoDB
 - lofka-python-utils Python的日志Handler，将Python的日志统一收集到Lofka
+
+
+## 一开始的思路
+
+其设计思路最早来源于[RobertStewart/log4mongo-java](https://github.com/RobertStewart/log4mongo-java)。
+
+后来本人在其基础上做了一版[ShinonomeLaboratory/log4mongo-java](https://github.com/ShinonomeLaboratory/log4mongo-java)。
+
+最早做这个的动机是希望使用MongoDB存储非结构化文档和TTL（过期删除）的特性做日志持久化。
+
+目前只支持Java和Python，其中：
+
+- Java支持：Log4j(1.x/2.x) Logback
+- Python支持：原生日志系统
+
+但是这个收集器存在：
+
+1. 不能开放处理流数据的接口；
+2. 对代码的侵入较深；
+3. 需要开放数据库，不是很安全。
+
+等问题，最后考虑使用Http/Socket（当然最后发现Socket很坑爹）接收日志，统一存放到Kafka（或者其他消息队列）中，再从Kafka中消费数据持久化到任意数据库（只实现了MongoDB）。
+
+后来的设计越改越骚，加入了批量接口，随后又给批量和单个日志的接口加了Gzip压缩功能，lofka-utils加入了心跳包，同步日志发送器改为异步发送器，加入了转发服务器这种东西。
+
+在lofka-console里面，也加入了由命令行参数生成mongodb aggregate pipeline和JavaScript Function，还给服务端加上了JS引擎用来做服务端过滤。

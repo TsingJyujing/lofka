@@ -48,6 +48,9 @@ var console = {
     "err": function (info) {
         __GLOBAL_LOGGER.error(info);
     },
+    "error": function (info) {
+        __GLOBAL_LOGGER.error(info);
+    },
     "logJSON": function (info) {
         __GLOBAL_LOGGER.info(JSON.stringify(info, null, 2));
     },

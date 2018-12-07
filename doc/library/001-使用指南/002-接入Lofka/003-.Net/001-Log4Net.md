@@ -1,10 +1,21 @@
 # Log4net
 
-本项目是基于 log4net 2.0.8版本开发，兼容.net Framework 4.5+ 和.net core
+## 简介
+本项目是基于 log4net 2.0.8版本开发，兼容.net Framework 4.5 / 4.0 / 2.0 和.net core
 相信服务器端应用程序一般都应该升级到.net Framework 4.5以上版本了。
 其他版本只有等以后有时间再来实现了.
 
+### NuGet
+
+参见 [https://www.nuget.org/packages/Lofka.Log4net/](https://www.nuget.org/packages/Lofka.Log4net/)
+
+可以直接在NuGet上下载并使用
+
+## 说明
+
 项目包含两个适配器 [HttpAppender](#httpappender) 和[HttpAysncAppender](#httpaysncappender)
+
+
 ## HttpAppender
 HttpAppender适配器通常用于日志产生不频繁，且日志量比较小的情况。基本上产生日志就会把日志内容推送至lofka日志服务器,基本不存在延迟的情况（应用与服务器之间网络状况比较差，暂不在考虑范围emmmmm~）。
 ### 配置
@@ -29,8 +40,11 @@ HttpAppender适配器通常用于日志产生不频繁，且日志量比较小�
 </log4net>
 ```
 无需layout配置，lofka统一管理日志存储格式。（至于个性化的显示格式，你可以根据需要参考lofka日志格式自行修改。）
+
 ### 使用方法
+
 以下是一个简单的示例代码，主要作用是输出一句Info级别的日志，以及异常日志记录。
+
 ```csharp
 class Program
 {
@@ -87,7 +101,9 @@ HttpAysncAppender 是一个异步的适配器，特点是，收到日志以后�
 </log4net>
 ```
 不建议对 ***Target*** 和 ***CompressTarget*** 的配置进行修改，除非你修改了lofka的核心代码。
+
 ### 使用方法
+
 和[HttpAppender](#httpappender)的示例程序一样，只是为了达到批量推送日志的目的，在原有的输出Info级别和异常日志的基础上增加了一个90次的循环。
 
 ```csharp
@@ -117,18 +133,21 @@ HttpAysncAppender 是一个异步的适配器，特点是，收到日志以后�
      }
  }
 ```
+
 ## 特别说明
+
  我发现使用 `HttpAppender` 和 `HttpAysncAppender` 过程中，需要加载自定义配置文件，而加载配置文件以需要把`Lofka.Dotnet.Log4net`加载进系统,不然有时候会报log4net无法加载应用程序集`Lofka.Dotnet.Log4net`,并且通过调试发现无法进入自定义appender的Append方法。这个问题曾困扰我很久=====(￣▽￣*)b 可以参考如下代码来加载Lofka.Dotnet.Log4net应用程序集
+
 ####  HttpAppender
 
-```Csharp
+```csharp
 var config = new FileInfo("log4net.config");
 var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAppender));//加载Lofka.Dotnet.Log4net应用程序集
 var repository = LogManager.GetRepository(assembly);
 XmlConfigurator.Configure(repository, config);//初始化配置
 ```
 ####  HttpAysncAppender
-```Csharp
+```csharp
 var config = new FileInfo("log4net.config");
 var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
 var repository = LogManager.GetRepository(assembly);
@@ -136,4 +155,5 @@ XmlConfigurator.Configure(repository, config);//初始化配置
 ```
 
 ## 写在最后
+
 我觉得这两个Appender 各有优缺点，HttpAysncAppender 如果放在应用程序退出的时候输出日志，那么很有可能会丢失日志，HttpAppender的网络开销又太大，不适合大规模使用，所以理论上 HttpAppender 和 HttpAysncAppender  应该配合使用，本项目理论上也支持配合使用，但我个人没试过。━┳━　━┳━ 后面再写一个配合使用的示例.

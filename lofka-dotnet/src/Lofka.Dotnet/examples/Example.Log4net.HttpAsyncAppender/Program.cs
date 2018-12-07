@@ -17,17 +17,11 @@ namespace Example.Log4net.HttpAsyncAppender
             var repository = LogManager.GetRepository(assembly);
             XmlConfigurator.Configure(repository, configFile);//初始化配置
             var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-            for (int i = 0; i < 90; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                log.Info("Hello,this is Example");
-                try
-                {
-                    var val = int.Parse("abc");
-                }
-                catch (FormatException ex)
-                {
-                    log.Error(ex.ToString(), ex);
-                } 
+                log.Info("I'm INFO log...");
+                log.Error("I'm ERROR log...");
+                Console.WriteLine(i);
             }
             Console.ReadLine();
         }

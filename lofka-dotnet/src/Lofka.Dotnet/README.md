@@ -11,7 +11,7 @@ HttpAppender适配器通常用于日志产生不频繁，且日志量比较小�
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <log4net>
-  <appender name="HttpAppender" type="Lofka.Dotnet.Log4net.HttpAppender,Lofka.Dotnet.Log4net">
+  <appender name="HttpAppender" type="Lofka.Dotnet.Log4net.HttpAppender,Lofka.Log4net">
     <!--应用程序名称-->
     <param name="Application" value="Example/Log4net/HttpAppender"/>
     <!--日志服务地址-->
@@ -63,7 +63,7 @@ HttpAysncAppender 是一个异步的适配器，特点是，收到日志以后�
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <log4net>
-  <appender name="HttpAsyncAppender" type="Lofka.Dotnet.Log4net.HttpAsyncAppender,Lofka.Dotnet.Log4net">
+  <appender name="HttpAsyncAppender" type="Lofka.Dotnet.Log4net.HttpAsyncAppender,Lofka.Log4net">
     <!--应用程序名称-->
     <param name="Application" value="Example/Log4net/HttpAsyncAppender"/>
     <!--日志服务地址-->

@@ -5,6 +5,9 @@ import com.github.tsingjyujing.lofka.nightwatcher.keys.CommonKey
 import org.apache.flink.streaming.api.scala.{DataStream, _}
 import org.bson.Document
 
+/**
+  * 公共日志统计工具
+  */
 class CommonProcessor extends KeyableProcessor("common") {
     override def convertStream(ds: DataStream[Document]): DataStream[KeyableStatisticable[Keyable[String]]] = ds.flatMap(
         doc => try {

@@ -17,12 +17,24 @@ public class FileUtil {
      * @throws IOException
      */
     public static Properties autoReadProperties(String propertiesFileName) throws IOException {
+        return autoReadProperties(propertiesFileName, FileUtil.class);
+    }
+
+    /**
+     * 自动读取配置文件
+     * 先尝试从文件中获取，再从配置中获取
+     *
+     * @param propertiesFileName 配置文件名
+     * @return
+     * @throws IOException
+     */
+    public static Properties autoReadProperties(String propertiesFileName, Class c) throws IOException {
         try {
             // 尝试读取工作目录下conf文件夹
             return readPropertiesFile(propertiesFileName);
         } catch (IOException ex) {
             // 尝试读取资源文件
-            return readPropertiesResource(propertiesFileName);
+            return readPropertiesResource(propertiesFileName, c);
         }
     }
 
@@ -34,8 +46,19 @@ public class FileUtil {
      * @return properties对象
      */
     public static Properties readPropertiesResource(String propertiesResourceName) throws IOException {
+        return readPropertiesResource(propertiesResourceName, FileUtil.class);
+    }
+
+
+    /**
+     * 读取配置（从资源文件根目录中）
+     *
+     * @param propertiesResourceName 配置文件名
+     * @return properties对象
+     */
+    public static Properties readPropertiesResource(String propertiesResourceName, Class c) throws IOException {
         final Properties properties = new Properties();
-        final InputStream stream = FileUtil.class.getResourceAsStream("/" + propertiesResourceName);
+        final InputStream stream = c.getResourceAsStream("/" + propertiesResourceName);
         properties.load(stream);
         return properties;
     }

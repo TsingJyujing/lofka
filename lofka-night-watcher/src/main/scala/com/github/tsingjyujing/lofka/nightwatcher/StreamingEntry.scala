@@ -9,6 +9,7 @@ import com.github.tsingjyujing.lofka.util.FileUtil
 import com.google.common.collect.Lists
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
+import org.apache.flink.streaming.api.{CheckpointingMode, TimeCharacteristic}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09
 import org.bson.Document
 import org.slf4j.{Logger, LoggerFactory}
@@ -37,32 +38,54 @@ object StreamingEntry {
             params
         )
 
-        // 日志数据源
-        val logSource: DataStream[Document] = env.addSource({
-            val properties: Properties = FileUtil.autoReadProperties("lofka-kafka-client.properties")
+        val kafkaConsumer: FlinkKafkaConsumer09[Document] = {
+            val properties: Properties = try {
+                FileUtil.autoReadProperties("lofka-kafka-client.properties", StreamingEntry.getClass)
+            } catch {
+                case ex: Throwable =>
+                    LOGGER.error("Error while reading kafka client setting.", ex)
+                    null
+            }
             val topicList: java.util.List[String] = Lists.newArrayList(
                 properties.getProperty("kafka.topic", "logger-json").split(","): _*
             )
-            new FlinkKafkaConsumer09[Document](topicList, new JsonDocumentSchema(), properties)
-        })
+            val consumer = new FlinkKafkaConsumer09[Document](topicList, new JsonDocumentSchema(), properties)
+            consumer.setStartFromGroupOffsets()
+            consumer.setCommitOffsetsOnCheckpoints(true)
+            consumer
+        }
 
+        env.enableCheckpointing(1000, CheckpointingMode.EXACTLY_ONCE)
+        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
+        env.setParallelism(params.get("parallelism", "1").toInt)
+
+        // 日志数据源
+        val logSource: DataStream[Document] = env.addSource(kafkaConsumer)
+
+        /**
+          * 这里定义所有监听的服务
+          */
         val services: ArrayBuffer[IRichService[Document]] = ArrayBuffer[IRichService[Document]](
             new CommonProcessor(),
             new NginxProcessor(),
             new HeartbeatWriter()
         )
 
-        try{
+        // 尝试启动动态计算服务
+        try {
             services += new DynamicService(
                 params.get("dynamics")
             )
             LOGGER.info("DynamicService initialized.")
-         }catch {
-            case _:Throwable=>
+        } catch {
+            case _: Throwable =>
+                LOGGER.warn("Initialize dynamic service failed.")
         }
+
         services.foreach(
             _.richStreamProcessing(env, logSource)
         )
+
 
         env.execute("LofkaStreaming")
     }

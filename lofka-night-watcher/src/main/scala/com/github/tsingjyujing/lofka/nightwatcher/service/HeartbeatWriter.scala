@@ -11,6 +11,9 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.scala.{DataStream, _}
 import org.bson.Document
 
+/**
+  * 心跳包更新程序
+  */
 class HeartbeatWriter extends IRichService[Document] {
     /**
       * 处理带有初始化信息和配置的流
@@ -25,14 +28,12 @@ class HeartbeatWriter extends IRichService[Document] {
             case _: Throwable => false
         }).flatMap(doc => try {
             val messageDocument = doc.get("message", classOf[Document])
-            Some(
-                Doc(
-                    "app_name" -> doc.getString("app_name"),
-                    "heartbeat_name" -> messageDocument.getString("name"),
-                    "interval" -> messageDocument.getDouble("interval"),
-                    "receive_tick" -> System.currentTimeMillis().toDouble
-                )
-            )
+            Some(Doc(
+                "app_name" -> doc.getString("app_name"),
+                "heartbeat_name" -> messageDocument.getString("name"),
+                "interval" -> messageDocument.getDouble("interval"),
+                "receive_tick" -> System.currentTimeMillis().toDouble
+            ))
         } catch {
             case _: Throwable => None
         })
@@ -40,7 +41,7 @@ class HeartbeatWriter extends IRichService[Document] {
         // 心跳包更新写入MongoDB
         heartBeatSource.addSink(
             new BaseMongoDBSink[Document](
-                FileUtil.autoReadProperties("lofka-statistics-mongo.properties"),
+                FileUtil.autoReadProperties("lofka-statistics-mongo.properties",classOf[HeartbeatWriter]),
                 "logger", "heartbeat"
             ) {
 

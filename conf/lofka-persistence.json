@@ -19,7 +19,7 @@
           "mongodb.expired.setting.NGINX": "16416000000",
           "mongodb.expired.setting.TRACE": "300000",
           "mongodb.expired.setting.WARN": "2678400000",
-          "mongodb.servers": "name1:27017,name2:27017,data1:27017,data2:27017,data3:27017"
+          "mongodb.servers": "127.0.0.1:27017"
         }
       }
     }

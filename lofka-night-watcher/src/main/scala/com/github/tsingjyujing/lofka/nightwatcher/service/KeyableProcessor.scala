@@ -16,6 +16,11 @@ import org.bson.Document
 
 import scala.collection.JavaConverters._
 
+/**
+  * 针对 Keyable[String] 进行分类统计的
+  *
+  * @param collectionPrefix 使用的 Collection 的前缀
+  */
 abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[Document] {
 
     implicit def timeToLong(time: Time): Long = time.toMilliseconds
@@ -113,7 +118,7 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
             }
         ).addSink(
             new BaseMongoDBSink[Iterable[ValuedWindow[KeyableStatisticable[Keyable[String]]]]](
-                FileUtil.autoReadProperties("lofka-statistics-mongo.properties"),
+                FileUtil.autoReadProperties("lofka-statistics-mongo.properties", classOf[KeyableProcessor]),
                 "logger", collectionName
             ) {
                 override def invoke(value: Iterable[ValuedWindow[KeyableStatisticable[Keyable[String]]]], context: SinkFunction.Context[_]): Unit = {
@@ -140,8 +145,8 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
       * 通过键值按周期分类统计，并且追加到数据库
       *
       * @param ds
-      * @param aggregateTime
-      * @param collectionName
+      * @param aggregateTime  聚合时间
+      * @param collectionName 写入Collection的名称
       * @return
       */
     def tumblingAggregateAppender(
@@ -172,7 +177,7 @@ abstract class KeyableProcessor(collectionPrefix: String) extends IRichService[D
 
         aggregatedStream.addSink(
             new BaseMongoDBSink[ValuedWindow[KeyableStatisticable[Keyable[String]]]](
-                FileUtil.autoReadProperties("lofka-statistics-mongo.properties"),
+                FileUtil.autoReadProperties("lofka-statistics-mongo.properties", classOf[KeyableProcessor]),
                 "logger", collectionName
             ) {
 

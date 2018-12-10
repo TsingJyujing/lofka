@@ -14,8 +14,6 @@ class NginxProcessor extends KeyableProcessor("nginx") {
             assert(doc.getString("type").toLowerCase().equals("nginx"), "type not nginx")
             val messageDocument = doc.get("message", classOf[Document])
             val hostDocument = doc.get("host", classOf[Document])
-            val upstreamTime = messageDocument.getDouble("upstream_response_time")
-
             val key = NginxKey(
                 doc.getString("app_name"),
                 hostDocument.getString("ip"),
@@ -27,8 +25,11 @@ class NginxProcessor extends KeyableProcessor("nginx") {
             Some(KeyableStatisticable.createFromNumbers[Keyable[String]](
                 key, Map(
                     "count" -> 1,
+                    // 接口调用的时间
                     "upstream_time" -> messageDocument.getDouble("upstream_response_time"),
+                    // 返回的BODY的大小
                     "body_size" -> messageDocument.getDouble("body_bytes_sent"),
+                    // 请求的大小
                     "request_size" -> messageDocument.getDouble("request_length")
                 )
             ))

@@ -97,10 +97,6 @@ namespace Lofka.Dotnet.Log4net
             if (loggingEvent != null)
             {
                 logBuffer.Add(loggingEvent.ToLoggerInfo(Application));
-                if (logBuffer.Count > MaxSize)
-                {
-                    PushToServer();
-                }
             }
         }
         /// <summary>
@@ -167,7 +163,7 @@ namespace Lofka.Dotnet.Log4net
         {
             while (Working)
             {
-                if ((DateTime.Now - lastPushTime).TotalMilliseconds > Interval)
+                if ((DateTime.Now - lastPushTime).TotalMilliseconds > Interval || logBuffer.Count > MaxSize)
                 {
                     PushToServer();
                 }

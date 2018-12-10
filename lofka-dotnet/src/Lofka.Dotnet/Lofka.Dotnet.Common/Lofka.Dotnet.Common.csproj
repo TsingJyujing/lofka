@@ -3,15 +3,17 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net45;net40</TargetFrameworks>
         <AssemblyName>Lofka.Dotnet.Common</AssemblyName>
-        <Authors>James.Xin@outlook.comn</Authors>
+        <Authors>James.Xin@outlook.com</Authors>
         <Company>James.Xin@outlook.com</Company>
         <Product>Lofka.Dotnet</Product>
         <Description>lofka (https://github.com/TsingJyujing/lofka)是一套开源的日志集中管理的工具。
 Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。</Description>
-        <Version>0.0.5</Version>
-        <AssemblyVersion>0.0.5.0</AssemblyVersion>
-        <PackageReleaseNotes>增加.Net FarmeWork 4.0 / .Net FarmeWork 4.5 兼容适配</PackageReleaseNotes>
+        <Version>0.0.7</Version>
+        <AssemblyVersion>0.0.7.0</AssemblyVersion>
+        <PackageReleaseNotes>1、HttpAsyncAppender日志缓存从List改为BlockingCollection
+2、设置http并发连接限制数</PackageReleaseNotes>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <FileVersion>0.0.7.0</FileVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' =='netstandard2.0' ">
         <DefineConstants>NETSTANDARD20</DefineConstants>

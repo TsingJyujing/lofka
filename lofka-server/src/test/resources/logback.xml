@@ -9,16 +9,16 @@
     </appender>
 
     <appender name="SOCKET" class="com.github.tsingjyujing.lofka.appender.logback.HttpAsyncAppender">
-        <target>http://127.0.0.1:9500/</target>
+        <target>http://10.10.11.75:9500/</target>
         <applicationName>lofka_test/logback/async_http</applicationName>
-        <interval>100</interval>
-        <maxBufferSize>100</maxBufferSize>
+        <interval>200</interval>
+        <maxBufferSize>10000</maxBufferSize>
     </appender>
 
 
     <root level="INFO">
         <appender-ref ref="SOCKET"/>
-        <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="STDOUT"/>-->
     </root>
 
 </configuration>

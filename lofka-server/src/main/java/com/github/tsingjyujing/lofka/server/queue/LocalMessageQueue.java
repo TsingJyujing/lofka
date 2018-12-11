@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class LocalMessageQueue extends BaseAsyncProcessor<Document> implements IMessageQueue {
 
+    public LocalMessageQueue(){
+
+    }
+
     /**
      * 批量数据处理
      *

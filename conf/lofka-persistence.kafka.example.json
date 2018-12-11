@@ -4,9 +4,9 @@
     "config": {
       "auto.commit.interval.ms": "99999999",
       "auto.offset.reset": "latest",
-      "bootstrap.servers": "10.10.11.75:9092",
+      "bootstrap.servers": "data1:9092,data2:9092,data3:9092",
       "enable.auto.commit": "true",
-      "group.id": "logger-json-persistence-consumer-test",
+      "group.id": "logger-json-persistence-consumer",
       "kafka.topic": "logger-json",
       "key.deserializer": "org.apache.kafka.common.serialization.IntegerDeserializer",
       "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer"
@@ -15,6 +15,7 @@
       "mongodb-saver-0": {
         "processorType": "mongodb",
         "config": {
+          "mongodb.auth": "logger_write:logger_write@logger",
           "mongodb.collection": "lofka",
           "mongodb.database": "logger",
           "mongodb.deprecate.time": "3600000",
@@ -27,14 +28,6 @@
           "mongodb.expired.setting.TRACE": "300000",
           "mongodb.expired.setting.WARN": "2678400000",
           "mongodb.servers": "127.0.0.1:27017"
-        }
-      },
-      "filesaver-0":{
-        "processorType": "file",
-        "config": {
-          "filename":"test.log",
-          "flush.interval":"500",
-          "append":"true"
         }
       }
     }

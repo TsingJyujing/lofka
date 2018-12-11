@@ -41,6 +41,9 @@ public class HttpLoggerServer {
     private final String successfullyWritten;
     private final MessageQueueCluster messageQueueCluster = MessageQueueCluster.getInstance();
     private final static Logger LOGGER = LoggerFactory.getLogger(HttpLoggerServer.class);
+    /**
+     * 可接受的等级信息
+     */
     private final Set<String> levelSet = Sets.newHashSet(
             "TRACE",
             "DEBUG",
@@ -195,7 +198,7 @@ public class HttpLoggerServer {
     /**
      * 多消息处理器
      *
-     * @param results
+     * @param results 多个消息
      * @param request
      * @return
      */
@@ -219,8 +222,8 @@ public class HttpLoggerServer {
     /**
      * 消息处理器
      *
-     * @param result
-     * @param request
+     * @param result  消息数据
+     * @param request 请求信息
      * @return
      */
     private Map messageProcessor(Map result, HttpServletRequest request) {

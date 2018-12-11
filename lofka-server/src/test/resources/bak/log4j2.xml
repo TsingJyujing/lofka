@@ -6,10 +6,10 @@
         </Console>
         <LofkaAsyncHttp
                 name="HttpAppender"
-                target="http://127.0.0.1:9500/"
+                target="http://10.10.11.75:9500/"
                 applicationName="lofka_test/log4j2/async_http"
-                interval="100"
-                maxBufferSize="100"
+                interval="200"
+                maxBufferSize="1000"
         />
 
     </appenders>

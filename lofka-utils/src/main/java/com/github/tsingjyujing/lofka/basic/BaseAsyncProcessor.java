@@ -3,11 +3,12 @@ package com.github.tsingjyujing.lofka.basic;
 
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 异步数据处理器
@@ -39,6 +40,7 @@ public abstract class BaseAsyncProcessor<DataType> {
      * 最大缓冲区大小
      */
     private final AtomicInteger maxBufferSize = new AtomicInteger(1000);
+    private final ReentrantLock bufferLock = new ReentrantLock();
 
     public void setMaxBufferSize(int size) {
         if (size > 0) {
@@ -50,7 +52,7 @@ public abstract class BaseAsyncProcessor<DataType> {
         return maxBufferSize.get();
     }
 
-    private final LinkedList<DataType> dataBuffer = new LinkedList<>();
+    private ArrayList<DataType> dataBuffer = Lists.newArrayList();
 
     /**
      * 添加数据
@@ -59,8 +61,11 @@ public abstract class BaseAsyncProcessor<DataType> {
      */
     public void offerData(DataType data) {
         if (data != null) {
-            synchronized (dataBuffer) {
-                dataBuffer.offer(data);
+            bufferLock.lock();
+            try {
+                dataBuffer.add(data);
+            } finally {
+                bufferLock.unlock();
             }
             if (dataBuffer.size() > getMaxBufferSize()) {
                 cleanBufferList();
@@ -70,8 +75,11 @@ public abstract class BaseAsyncProcessor<DataType> {
 
     public void offerData(Collection<DataType> data) {
         if (data != null) {
-            synchronized (dataBuffer) {
+            bufferLock.lock();
+            try {
                 dataBuffer.addAll(data);
+            } finally {
+                bufferLock.unlock();
             }
             if (dataBuffer.size() > getMaxBufferSize()) {
                 cleanBufferList();
@@ -94,9 +102,12 @@ public abstract class BaseAsyncProcessor<DataType> {
 
     private void cleanBufferList() {
         final List<DataType> bufferCopy;
-        synchronized (dataBuffer) {
-            bufferCopy = Lists.newArrayList(dataBuffer);
-            dataBuffer.clear();
+        bufferLock.lock();
+        try {
+            bufferCopy = dataBuffer;
+            dataBuffer = Lists.newArrayList(dataBuffer);
+        } finally {
+            bufferLock.unlock();
         }
         if (!bufferCopy.isEmpty()) {
             try {

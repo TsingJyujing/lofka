@@ -56,6 +56,7 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
 
     /**
      * 加载默认配置文件
+     *
      * @throws IOException
      */
     public MongoDBWriter() throws IOException {
@@ -72,8 +73,8 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
     @Override
     public void processLoggers(Collection<Document> logs) {
         final long deprecatedTick = System.currentTimeMillis() + expiredMills;
+        final List<Document> documentList = Lists.newArrayList();
         try {
-            final List<Document> documentList = Lists.newArrayList();
             for (Document log : logs) {
                 Document processedLog = DocumentUtil.mongoLogProcessor(
                         log, expiredSetting
@@ -88,7 +89,18 @@ public class MongoDBWriter extends MongoDBConnectionLoader implements IBatchLogg
                 loggerCollection.insertMany(documentList, insertOption);
             }
         } catch (Exception ex) {
-            LOGGER.error("Error while insert batch logs into mongodb.", ex);
+            LOGGER.debug(
+                    String.format(
+                            "Error while insert %d batch logs into mongodb: ",
+                            documentList.size()
+                    ), ex);
+            for (Document document : documentList) {
+                try {
+                    loggerCollection.insertOne(document);
+                } catch (Exception exOne) {
+                    LOGGER.debug("Error while insert one log into mongodb: ", exOne);
+                }
+            }
         }
     }
 

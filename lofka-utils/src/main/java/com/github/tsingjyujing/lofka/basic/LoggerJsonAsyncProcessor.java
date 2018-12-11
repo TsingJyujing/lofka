@@ -11,6 +11,7 @@ import java.util.Map;
  *
  * @author yuanyifan
  */
+@Deprecated
 public class LoggerJsonAsyncProcessor extends BaseAsyncProcessor<Map> {
     private final Gson gson = new Gson();
     private final String batchLogPostLocation;

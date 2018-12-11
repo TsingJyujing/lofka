@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author yuanyifan
  */
 public class LoggerJsonAsyncAutoProcessor extends BaseAsyncProcessor<Map> {
+
     private final Gson gson = new Gson();
     private final String batchLogPostLocation;
     private final String batchLogCompressedPostLocation;

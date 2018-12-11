@@ -148,10 +148,19 @@ XmlConfigurator.Configure(repository, config);//初始化配置
 ```
 ####  HttpAysncAppender
 ```csharp
-var config = new FileInfo("log4net.config");
-var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAsyncAppender));//加载Lofka.Dotnet.Log4net应用程序集
+var configFile = new FileInfo("log4net.config");
+var assembly = Assembly.GetAssembly(typeof(Lofka.Dotnet.Log4net.HttpAppender));//加载Lofka.Dotnet.Log4net应用程序集
 var repository = LogManager.GetRepository(assembly);
-XmlConfigurator.Configure(repository, config);//初始化配置
+
+/*
+* 加载配置文件。如果要监控配置文件变化，则使用XmlConfigurator.ConfigureAndWatch(repository, configFile); 这样配置文件发生变化时，会重新初始化配置
+*/
+XmlConfigurator.Configure(repository, configFile);
+
+/*
+* 加载配置文件。如果要监控配置文件变化，则使用XmlConfigurator.ConfigureAndWatch(repository, configFile); 这样配置文件发生变化时，会重新初始化配置
+*/
+XmlConfigurator.Configure(repository, configFile);
 ```
 
 ## 写在最后

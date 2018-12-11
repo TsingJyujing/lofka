@@ -24,7 +24,7 @@ namespace Lofka.Dotnet.Common
             Client = new HttpClient();
             Client.DefaultRequestHeaders.Connection.Add("keep-alive");
 #endif
-            ServicePointManager.DefaultConnectionLimit = 512;
+            ServicePointManager.DefaultConnectionLimit = 800;
         }
         /// <summary>
         /// 构造函数
@@ -72,7 +72,6 @@ namespace Lofka.Dotnet.Common
                 }
                 var content = new ByteArrayContent(postData);
                 var response = await Client.PostAsync(target, content);
-
                 //Console.WriteLine(strPostData);
                 return response.IsSuccessStatusCode;
             }

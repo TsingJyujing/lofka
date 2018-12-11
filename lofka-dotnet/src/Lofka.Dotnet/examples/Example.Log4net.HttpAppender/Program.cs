@@ -17,6 +17,7 @@ namespace Example.Log4net.HttpAppender
             var repository = LogManager.GetRepository(assembly);
             var col=XmlConfigurator.Configure(repository, configFile);//初始化配置
             var log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+            //LogManager.GetLogger("sq");
             log.Info("Hello,this is Example");
             try
             {

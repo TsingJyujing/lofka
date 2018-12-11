@@ -77,6 +77,10 @@ namespace Lofka.Dotnet.Log4net
         /// </summary>
         public int MaxSize { set; get; } = 1024;
         /// <summary>
+        /// 日志推送最多条数
+        /// </summary>
+        private readonly int MaxPushSize = 10000;
+        /// <summary>
         /// 日志推送间隔 单位 毫秒
         /// 当最近一次推送到当前时间达到推送间隔时，程序会自动将缓存里的日志一次全部推送给日志服务器
         /// MaxSize 与Interval 只要有一个条件成立，就会执行日志自动推送
@@ -111,10 +115,12 @@ namespace Lofka.Dotnet.Log4net
                 return;
             }
             var lst = new List<LoggerInfo>();
-            for (int i = 0; i < logBuffer.Count; i++)
+            var size= Math.Min(MaxPushSize, logBuffer.Count);
+            for (int i = 0; i < size; i++)
             {
                 lst.Add(logBuffer.Take());
             }
+            //Console.WriteLine(lst.Count);
             jsonData = JsonConvert.SerializeObject(lst);
             //logBuffer.Clear();
             if (!string.IsNullOrEmpty(jsonData))
@@ -142,6 +148,7 @@ namespace Lofka.Dotnet.Log4net
 #if NET40
                     isComplete=httpUtil.PostData(target, jsonData, isCompress);
 #else
+
                     isComplete = httpUtil.PostDataAsync(target, jsonData, isCompress).Result;
 #endif
 

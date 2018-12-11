@@ -148,19 +148,7 @@ public class HttpLoggerServer {
     ) throws Exception {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
         final List results = new Gson().fromJson(reader, ArrayList.class);
-        final int sumCount = results.size();
-        if (sumCount <= 0) {
-            throw new RuntimeException("No data in list.");
-        }
-        int succeeded = multiMessageProcessor(results, request);
-        if (succeeded <= 0) {
-            throw new RuntimeException("No data saved, all failed.");
-        }
-        final Map<String, Object> returnValue = Maps.newHashMap();
-        returnValue.put("status", 200);
-        returnValue.put("server_app_name", systemApplicationName);
-        returnValue.put("message", new Document("successed", succeeded).append("count", sumCount));
-        return GSON.toJson(returnValue);
+        return processBatchLogs(results, request);
     }
 
     /**
@@ -180,34 +168,34 @@ public class HttpLoggerServer {
             HttpServletRequest request
     ) throws Exception {
         final List results = new Gson().fromJson(CompressUtil.decompressUTF8String(request.getInputStream()), ArrayList.class);
-        final int sumCount = results.size();
+        return processBatchLogs(results, request);
+    }
+
+
+    /**
+     * 处理批量的日志信息，并且生成返回结果
+     *
+     * @param logs    批量日志
+     * @param request 请求
+     * @return
+     */
+    private String processBatchLogs(List logs, HttpServletRequest request) {
+        final int sumCount = logs.size();
         if (sumCount <= 0) {
             throw new RuntimeException("No data in list.");
         }
-        int succeeded = multiMessageProcessor(results, request);
-        if (succeeded <= 0) {
-            throw new RuntimeException("No data saved, all failed.");
-        }
-        final Map<String, Object> returnValue = Maps.newHashMap();
-        returnValue.put("status", 200);
-        returnValue.put("server_app_name", systemApplicationName);
-        returnValue.put("message", new Document("successed", succeeded).append("count", sumCount));
-        return GSON.toJson(returnValue);
-    }
-
-    /**
-     * 多消息处理器
-     *
-     * @param results 多个消息
-     * @param request
-     * @return
-     */
-    private int multiMessageProcessor(Iterable results, HttpServletRequest request) {
         int succeeded = 0;
-        for (Object result : results) {
+        for (Object result : logs) {
             if (result instanceof Map) {
                 try {
-                    messageQueueCluster.pushQueue(GSON.toJson(messageProcessor((Map) result, request)));
+                    messageQueueCluster.pushQueue(
+                            GSON.toJson(
+                                    messageProcessor(
+                                            (Map) result,
+                                            request
+                                    )
+                            )
+                    );
                     succeeded++;
                 } catch (Exception ex) {
                     LOGGER.info("Error while saving data", ex);
@@ -216,7 +204,14 @@ public class HttpLoggerServer {
                 LOGGER.info("Object in list is not a Map.");
             }
         }
-        return succeeded;
+        if (succeeded <= 0) {
+            throw new RuntimeException("No data saved, all failed.");
+        }
+        final Map<String, Object> returnValue = Maps.newHashMap();
+        returnValue.put("status", 200);
+        returnValue.put("server_app_name", systemApplicationName);
+        returnValue.put("message", new Document("successed", succeeded).append("count", sumCount));
+        return GSON.toJson(returnValue);
     }
 
     /**

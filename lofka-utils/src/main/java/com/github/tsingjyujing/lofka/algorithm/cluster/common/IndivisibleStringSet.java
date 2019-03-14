@@ -30,6 +30,10 @@ public class IndivisibleStringSet<T extends Comparable<T>> implements IDivisible
         return this.data.size();
     }
 
+    public List<TypedSequence<T>> getDataCopy() {
+        return Lists.newArrayList(data);
+    }
+
     @Override
     public boolean isDivisible() {
         return false;

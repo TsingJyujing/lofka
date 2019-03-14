@@ -3,7 +3,7 @@ package com.github.tsingjyujing.lofka.nightwatcher
 import java.util.Properties
 
 import com.github.tsingjyujing.lofka.nightwatcher.basic.IRichService
-import com.github.tsingjyujing.lofka.nightwatcher.service.{CommonProcessor, DynamicService, HeartbeatWriter, NginxProcessor}
+import com.github.tsingjyujing.lofka.nightwatcher.service._
 import com.github.tsingjyujing.lofka.nightwatcher.util.JsonDocumentSchema
 import com.github.tsingjyujing.lofka.util.FileUtil
 import com.google.common.collect.Lists
@@ -55,7 +55,7 @@ object StreamingEntry {
             consumer
         }
 
-        env.enableCheckpointing(1000, CheckpointingMode.EXACTLY_ONCE)
+        env.enableCheckpointing(100000, CheckpointingMode.EXACTLY_ONCE)
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
         env.setParallelism(params.get("parallelism", "1").toInt)
 
@@ -66,13 +66,19 @@ object StreamingEntry {
           * 这里定义所有监听的服务
           */
         val services: ArrayBuffer[IRichService[Document]] = ArrayBuffer[IRichService[Document]](
-            new CommonProcessor(),
-            new NginxProcessor(),
-            new HeartbeatWriter()
+            //            new CommonProcessor(),
+            //            new NginxProcessor(),
+            //            new HeartbeatWriter()
+            new ErrorAggregate(
+                compareRatio = 0.6,
+                ttlMillsSeconds = 60000,
+                maxAggregateCount = 500
+            )
         )
 
         // 尝试启动动态计算服务
         try {
+            throw new RuntimeException("Disable service")
             services += new DynamicService(
                 params.get("dynamics")
             )

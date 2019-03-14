@@ -29,6 +29,22 @@ public class SubString extends Suffix {
         return (getEndPos() < 0 || getEndPos() >= getFullSize()) && isStartEndValid();
     }
 
+    public String getPrefixString() {
+        if (isStartPosValid() && isEndPosValid()) {
+            return null;
+        } else {
+            return new String(getData(), 0, getStartPos());
+        }
+    }
+
+    public String getSuffixString() {
+        if (isStartPosValid() && isEndPosValid()) {
+            return null;
+        } else {
+            return new String(getData(), getEndPos(), getData().length - getEndPos());
+        }
+    }
+
     @Override
     public int getSize() {
         return getEndPos() - getStartPos();

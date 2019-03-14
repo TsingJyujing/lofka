@@ -176,52 +176,52 @@
                 <package-mode-runtime>runtime</package-mode-runtime>
                 <package-mode-provided>provided</package-mode-provided>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build><plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.0.0</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <artifactSet>
-                                    <excludes>
-                                        <exclude>org.apache.flink:force-shading</exclude>
-                                        <exclude>com.google.code.findbugs:jsr305</exclude>
-                                        <exclude>org.slf4j:*</exclude>
-                                        <exclude>log4j:*</exclude>
-                                    </excludes>
-                                </artifactSet>
-                                <filters>
-                                    <filter>
-                                        <!-- Do not copy the signatures in the META-INF folder.
-                                        Otherwise, this might cause SecurityExceptions when using the JAR. -->
-                                        <artifact>*:*</artifact>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactSet>
                                         <excludes>
-                                            <exclude>META-INF/*.SF</exclude>
-                                            <exclude>META-INF/*.DSA</exclude>
-                                            <exclude>META-INF/*.RSA</exclude>
+                                            <exclude>org.apache.flink:force-shading</exclude>
+                                            <exclude>com.google.code.findbugs:jsr305</exclude>
+                                            <exclude>org.slf4j:*</exclude>
+                                            <exclude>log4j:*</exclude>
                                         </excludes>
-                                    </filter>
-                                </filters>
-                                <transformers>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                        <mainClass>com.github.tsingjyujing.lofka.nightwatcher.StreamingEntry</mainClass>
-                                    </transformer>
-                                </transformers>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins></build>
+                                    </artifactSet>
+                                    <filters>
+                                        <filter>
+                                            <!-- Do not copy the signatures in the META-INF folder.
+                                            Otherwise, this might cause SecurityExceptions when using the JAR. -->
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <transformers>
+                                        <transformer
+                                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>com.github.tsingjyujing.lofka.nightwatcher.StreamingEntry
+                                            </mainClass>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <!--最小集群模式-->
@@ -231,44 +231,49 @@
                 <package-mode-runtime>compile</package-mode-runtime>
                 <package-mode-provided>compile</package-mode-provided>
             </properties>
-            <build><plugins>
-                <!--用于将依赖复制到lib文件夹下-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>copy-dependencies</id>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>copy-dependencies</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                                <overWriteReleases>false</overWriteReleases>
-                                <overWriteSnapshots>false</overWriteSnapshots>
-                                <overWriteIfNewer>true</overWriteIfNewer>
-                                <includeScope>compile</includeScope>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!--用于将依赖复制到lib文件夹下-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>false</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                    <includeScope>compile</includeScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-                <!--打包使用插件-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addClasspath>true</addClasspath>
-                                <classpathPrefix>lib/</classpathPrefix>
-                                <mainClass>com.github.tsingjyujing.lofka.nightwatcher.StreamingEntry</mainClass>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                </plugin>
-            </plugins></build>
+                    <!--打包使用插件-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                    <mainClass>com.github.tsingjyujing.lofka.nightwatcher.StreamingEntry</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
     </profiles>

@@ -94,7 +94,7 @@ public class DivisibleStringSet<T extends Comparable<T>> extends IndivisibleStri
         TypedSequence<T> firstData = data.get(0);
         int k = 1;
         for (; k < data.size(); k++) {
-            if (!data.get(k).contains(firstData)) {
+            if (!data.get(k).equals(firstData)) {
                 break;
             }
         }

@@ -304,7 +304,7 @@ publish
 
 # TODO Comment the next line if you want to checkin your static deploy settings
 
-# but database connection strings (with potential passwords) will be unencrypted
+# but database connection data (with potential passwords) will be unencrypted
 
 .pubxml
 

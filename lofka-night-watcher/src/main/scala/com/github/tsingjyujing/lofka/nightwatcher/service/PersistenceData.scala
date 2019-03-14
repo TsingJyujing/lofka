@@ -70,7 +70,7 @@ class PersistenceData extends IRichService[Document] {
                     ).toJson())
                 }
             }
-        )
+        ).name("data-persistence-sink")
     }
 }
 

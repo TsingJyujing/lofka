@@ -1,8 +1,7 @@
 package com.github.tsingjyujing.lofka.nightwatcher.service
 
 import java.util
-import java.util.concurrent.atomic.AtomicLong
-
+import java.util
 import com.github.tsingjyujing.lofka.algorithm.cluster.bistring.LongestStringSubSequenceCalculator
 import com.github.tsingjyujing.lofka.algorithm.cluster.common.{DivisibleGenerator, IDivisible, IndivisibleStringSet, SingleString}
 import com.github.tsingjyujing.lofka.nightwatcher.basic.IRichService
@@ -201,7 +200,7 @@ class ErrorAggregate(
                     )
                 })
             }
-        })
+        }).setParallelism(1).name("alarm-aggregate-sink")
 
     }
 }

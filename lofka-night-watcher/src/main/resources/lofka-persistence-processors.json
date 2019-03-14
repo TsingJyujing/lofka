@@ -1,0 +1,19 @@
+{
+  "mongodb-saver-0": {
+    "processorType": "mongodb",
+    "config": {
+      "mongodb.servers": "admin:27017,name2:27017,name1:27017",
+      "mongodb.collection": "lofka",
+      "mongodb.database": "logger",
+      "mongodb.deprecate.time": "3600000",
+      "mongodb.expired.setting.DEBUG": "600000",
+      "mongodb.expired.setting.DEFAULT": "259200000",
+      "mongodb.expired.setting.ERROR": "31622400000",
+      "mongodb.expired.setting.FATAL": "63244800000",
+      "mongodb.expired.setting.INFO": "604800000",
+      "mongodb.expired.setting.NGINX": "16416000000",
+      "mongodb.expired.setting.TRACE": "300000",
+      "mongodb.expired.setting.WARN": "2678400000"
+    }
+  }
+}

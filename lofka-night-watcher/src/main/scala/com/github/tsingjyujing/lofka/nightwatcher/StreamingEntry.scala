@@ -10,7 +10,7 @@ import com.google.common.collect.Lists
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
 import org.apache.flink.streaming.api.{CheckpointingMode, TimeCharacteristic}
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011
 import org.bson.Document
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -25,11 +25,10 @@ object StreamingEntry {
     /**
       * 入口地址
       *
-      * @param args
+      * @param args dynamics 动态脚本地址
+      *             parallelism 默认并发
       */
     def main(args: Array[String]): Unit = {
-
-        // 动态脚本的位置
 
         val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
 
@@ -38,9 +37,9 @@ object StreamingEntry {
             params
         )
 
-        val kafkaConsumer: FlinkKafkaConsumer09[Document] = {
+        val kafkaConsumer: FlinkKafkaConsumer011[Document] = {
             val properties: Properties = try {
-                FileUtil.autoReadProperties("lofka-kafka-client.properties", StreamingEntry.getClass)
+                FileUtil.autoReadProperties("lofka-kafka-client.properties", getClass)
             } catch {
                 case ex: Throwable =>
                     LOGGER.error("Error while reading kafka client setting.", ex)
@@ -49,13 +48,13 @@ object StreamingEntry {
             val topicList: java.util.List[String] = Lists.newArrayList(
                 properties.getProperty("kafka.topic", "logger-json").split(","): _*
             )
-            val consumer = new FlinkKafkaConsumer09[Document](topicList, new JsonDocumentSchema(), properties)
+            val consumer = new FlinkKafkaConsumer011[Document](topicList, new JsonDocumentSchema(), properties)
             consumer.setStartFromGroupOffsets()
             consumer.setCommitOffsetsOnCheckpoints(true)
             consumer
         }
 
-        env.enableCheckpointing(100000, CheckpointingMode.EXACTLY_ONCE)
+        env.enableCheckpointing(60000, CheckpointingMode.EXACTLY_ONCE)
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
         env.setParallelism(params.get("parallelism", "1").toInt)
 
@@ -63,12 +62,13 @@ object StreamingEntry {
         val logSource: DataStream[Document] = env.addSource(kafkaConsumer)
 
         /**
-          * 这里定义所有监听的服务
+          * 这里定义所有监听的服务（动态服务除外）
           */
         val services: ArrayBuffer[IRichService[Document]] = ArrayBuffer[IRichService[Document]](
-            //            new CommonProcessor(),
-            //            new NginxProcessor(),
-            //            new HeartbeatWriter()
+            new CommonProcessor(),
+            new NginxProcessor(),
+            new HeartbeatWriter(),
+            new PersistenceData(),
             new ErrorAggregate(
                 compareRatio = 0.6,
                 ttlMillsSeconds = 60000,
@@ -76,18 +76,24 @@ object StreamingEntry {
             )
         )
 
-        // 尝试启动动态计算服务
-        try {
-            throw new RuntimeException("Disable service")
-            services += new DynamicService(
-                params.get("dynamics")
-            )
-            LOGGER.info("DynamicService initialized.")
-        } catch {
-            case _: Throwable =>
-                LOGGER.warn("Initialize dynamic service failed.")
+        /**
+          * 尝试启动动态计算服务
+          */
+        if (params.has("dynamics")) {
+            try {
+                services += new DynamicService(
+                    params.get("dynamics")
+                )
+                LOGGER.info("DynamicService initialized.")
+            } catch {
+                case ex: Throwable =>
+                    LOGGER.warn("Initialize dynamic service failed which caused by:", ex)
+            }
         }
 
+        /**
+          * 逐一启动服务
+          */
         services.foreach(
             _.richStreamProcessing(env, logSource)
         )

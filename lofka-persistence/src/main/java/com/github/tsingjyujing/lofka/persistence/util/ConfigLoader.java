@@ -80,7 +80,7 @@ public class ConfigLoader {
     /**
      * 方便解析配置文件的实体类
      */
-    private class ProcessorInfo {
+    public static class ProcessorInfo {
         /**
          * 日志处理器的类型
          */
@@ -121,7 +121,7 @@ public class ConfigLoader {
     /**
      * 解析Source配置文件的实体类
      */
-    private class SourceInfo {
+    public static class SourceInfo {
         /**
          * 数据源类型
          */

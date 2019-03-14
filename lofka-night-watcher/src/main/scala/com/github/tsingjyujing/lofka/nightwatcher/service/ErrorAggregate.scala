@@ -54,7 +54,7 @@ class ErrorAggregate(
         })
 
         stringMessageAlertStream.addSink(new BaseMongoDBSink[Document](
-            FileUtil.autoReadProperties("lofka-statistics-mongo.properties"),
+            FileUtil.readPropertiesResource("lofka-statistics-mongo.properties",getClass),
             "logger", "aggregate_result"
         ) {
             /**

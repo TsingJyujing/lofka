@@ -10,6 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>lofka-night-watcher</artifactId>
+
+    <name>Lofka Night Watcher</name>
+    <description>Lofka 守夜人</description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>

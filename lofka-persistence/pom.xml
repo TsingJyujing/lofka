@@ -20,6 +20,9 @@
 
     <artifactId>lofka-persistence</artifactId>
 
+    <name>Lofka Persistence</name>
+    <description>日志持久化模块</description>
+
     <dependencies>
         <dependency>
             <groupId>com.github.tsingjyujing</groupId>

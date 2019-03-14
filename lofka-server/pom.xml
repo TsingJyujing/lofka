@@ -12,8 +12,8 @@
         <version>1.8-SNAPSHOT</version>
     </parent>
 
-    <name>logger-server</name>
-    <description>日志服务器接收端（可做负载均衡）</description>
+    <name>Lofka Server</name>
+    <description>日志服务器接收端</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

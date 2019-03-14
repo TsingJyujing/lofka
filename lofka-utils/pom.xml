@@ -21,6 +21,10 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
+    <name>Lofka Utils</name>
+    <description>日志公共代码部分</description>
+
+
     <dependencies>
 
         <!--如果目标包中使用了MongoDB可以屏蔽BOSN包的使用-->

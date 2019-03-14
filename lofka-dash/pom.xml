@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>lofka-server</artifactId>
-    <packaging>jar</packaging>
-
     <parent>
-        <groupId>com.github.tsingjyujing</groupId>
         <artifactId>lofka-parent</artifactId>
+        <groupId>com.github.tsingjyujing</groupId>
         <version>1.8-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <name>logger-server</name>
-    <description>日志服务器接收端（可做负载均衡）</description>
+    <artifactId>lofka-dash</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Lofka Dash</name>
+    <description>日志服务统计展示界面</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

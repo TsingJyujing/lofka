@@ -26,6 +26,7 @@
         <module>lofka-server</module>
         <module>lofka-persistence</module>
         <module>lofka-night-watcher</module>
+        <module>lofka-dash</module>
     </modules>
     <developers>
         <developer>

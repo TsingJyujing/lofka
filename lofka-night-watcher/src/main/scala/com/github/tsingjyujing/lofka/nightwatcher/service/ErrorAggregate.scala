@@ -1,7 +1,8 @@
 package com.github.tsingjyujing.lofka.nightwatcher.service
 
 import java.util
-import java.util
+
+import com.github.tsingjyujing.lofka.algorithm.cluster.IncrementalTextGeneralizer
 import com.github.tsingjyujing.lofka.algorithm.cluster.bistring.LongestStringSubSequenceCalculator
 import com.github.tsingjyujing.lofka.algorithm.cluster.common.{DivisibleGenerator, IDivisible, IndivisibleStringSet, SingleString}
 import com.github.tsingjyujing.lofka.nightwatcher.basic.IRichService
@@ -13,6 +14,7 @@ import com.mongodb.client.MongoCollection
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.scala.{DataStream, _}
 import org.bson.Document
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 
@@ -53,7 +55,7 @@ class ErrorAggregate(
         })
 
         stringMessageAlertStream.addSink(new BaseMongoDBSink[Document](
-            FileUtil.readPropertiesResource("lofka-statistics-mongo.properties",getClass),
+            FileUtil.readPropertiesResource("lofka-statistics-mongo.properties", getClass),
             "logger", "aggregate_result"
         ) {
             /**
@@ -90,16 +92,27 @@ class ErrorAggregate(
                 ).projection(
                     Doc(
                         "_id" -> 1,
-                        "first_message" -> 1
+                        "first_message" -> 1,
+                        "patterns" -> 1
                     )
                 ).asScala.find(k => {
-                    val compareMessage = k.getString("first_message")
-                    val seqSize = LongestStringSubSequenceCalculator.compute(
-                        compareMessage,
-                        currentMessage
-                    )
-                    val similarity = seqSize * 1.0 / math.max(compareMessage.length, currentMessage.length)
-                    similarity > compareRatio
+                    try {
+                        val firstMessage = k.getString("first_message")
+                        val patternList = k.get("patterns", classOf[java.util.ArrayList[String]])
+                        new IncrementalTextGeneralizer(1, 3, patternList).append(currentMessage)
+                        val commonRatio = LongestStringSubSequenceCalculator.compute(
+                            currentMessage,
+                            firstMessage
+                        ) * 1.0 / math.max(
+                            currentMessage.length,
+                            firstMessage.length
+                        )
+                        commonRatio > compareRatio
+                    } catch {
+                        case ex: Throwable =>
+                            ErrorAggregate.LOGGER.trace("Error while fetch:", ex)
+                            false
+                    }
                 })
 
                 satisfiedDataOption.onDefined(satisfiedData => {
@@ -115,13 +128,19 @@ class ErrorAggregate(
                                 "message_count" -> 1
                             ),
                             "$set" -> Doc(
-                                "end_tick" -> currentTick
+                                "end_tick" -> currentTick,
+                                "patterns" -> {
+                                    val itg = new IncrementalTextGeneralizer(1, 3, satisfiedData.get("patterns", classOf[java.util.ArrayList[String]]))
+                                    itg.append(currentMessage)
+                                    itg.getPattern()
+                                }
                             )
                         )
                     )
                 }).onUndefined(() => {
                     coll.insertOne(Doc(
                         "first_message" -> currentMessage,
+                        "patterns" -> Lists.newArrayList(currentMessage),
                         "first_message_length" -> currentMessage.length,
                         "start_tick" -> currentTick,
                         "end_tick" -> currentTick,
@@ -141,32 +160,35 @@ class ErrorAggregate(
                     "processed" -> false
                 )).asScala.foreach(doc => {
                     val docs = doc.get("documents", classOf[util.ArrayList[Document]]).asScala
+
+                    val divisibleGenerator = new DivisibleGenerator[String]()
+
                     val messagesGeneralize: util.List[IDivisible[String]] =
-                        DivisibleGenerator.analysisCommonStrings(
+                        divisibleGenerator.analysisCommonStrings(
                             1,
                             DivisibleGenerator.generateSequenceByComma(
-                                docs.map(_.getString("message")).toArray
+                                docs.map(_.getString("message")): _*
                             )
                         )
                     val loggerGeneralize =
-                        DivisibleGenerator.analysisPrefixStrings(
+                        divisibleGenerator.analysisPrefixStrings(
                             1,
                             DivisibleGenerator.generateSequenceByComma(
-                                docs.map(_.getString("logger")).toArray
+                                docs.map(_.getString("logger")): _*
                             )
                         )
                     val threadGeneralize =
-                        DivisibleGenerator.analysisCommonStrings(
+                        divisibleGenerator.analysisCommonStrings(
                             1,
                             DivisibleGenerator.generateSequenceByComma(
-                                docs.map(_.getString("thread")).toArray
+                                docs.map(_.getString("thread")): _*
                             )
                         )
 
-                    val appNameGeneralize = DivisibleGenerator.analysisPrefixStrings(
+                    val appNameGeneralize = divisibleGenerator.analysisPrefixStrings(
                         1,
                         DivisibleGenerator.generateSequenceByComma(
-                            docs.map(_.getString("app_name")).toArray
+                            docs.map(_.getString("app_name")): _*
                         )
                     )
 
@@ -206,6 +228,8 @@ class ErrorAggregate(
 }
 
 object ErrorAggregate {
+
+    protected val LOGGER: Logger = LoggerFactory.getLogger(getClass)
 
     val levelSet: Set[String] = Set("WARN", "ERROR", "FATAL")
 

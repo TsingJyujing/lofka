@@ -13,4 +13,10 @@ public class SubStringTest {
         SubString ss = new SubString(suffix, 3);
         Assert.assertEquals("Failed",ss.getPrefixString() + ss.toString() + ss.getSuffixString(), rawStr);
     }
+
+    @Test
+    public void noCommonTest() {
+        LongestSubStringCalculator lssc = new LongestSubStringCalculator("1234", "5678");
+        System.out.print(lssc);
+    }
 }

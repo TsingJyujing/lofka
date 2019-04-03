@@ -20,7 +20,7 @@ import scala.collection.mutable.ArrayBuffer
   * 流计算入口
   */
 object StreamingEntry {
-    protected val LOGGER: Logger = LoggerFactory.getLogger("Lofka Streaming Entry")
+    protected val LOGGER: Logger = LoggerFactory.getLogger(getClass)
 
     /**
       * 入口地址
@@ -65,10 +65,10 @@ object StreamingEntry {
           * 这里定义所有监听的服务（动态服务除外）
           */
         val services: ArrayBuffer[IRichService[Document]] = ArrayBuffer[IRichService[Document]](
-            new CommonProcessor(),
-            new NginxProcessor(),
-            new HeartbeatWriter(),
-            new PersistenceData(),
+//            new CommonProcessor(),
+//            new NginxProcessor(),
+//            new HeartbeatWriter(),
+//            new PersistenceData()
             new ErrorAggregate(
                 compareRatio = 0.6,
                 ttlMillsSeconds = 60000,

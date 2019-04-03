@@ -61,8 +61,6 @@ public class DivisibleStringSet<T extends Comparable<T>> extends IndivisibleStri
         TypedSequence<T> s = data.get(0);
         int len = s.size();
         TypedSequence<T> res = new TypedSequence<>(Lists.<T>newArrayList());
-
-
         for (int i = 0; i < len; i++) {
             for (int j = i + 1 + (minCommonStringSize - 1); j <= len; j++) {
                 TypedSequence<T> stem = s.subSequence(i, j);

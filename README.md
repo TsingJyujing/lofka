@@ -1,3 +1,5 @@
+![logo](img/lofka-logo.png)
+
 # Lofka日志收集系统
 
 **请注意，本项目在Apache 2.0 的基础上增加了 996-ICU 协议，使用的时候请注意遵守相关法律法规**

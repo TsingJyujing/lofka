@@ -90,17 +90,27 @@ public class MongoDBConnectionLoader {
         final MongoClientOptions options = MongoClientOptions.builder()
                 .compressorList(Lists.newArrayList(MongoCompressor.createSnappyCompressor()))
                 .build();
+        final List<ServerAddress> servers = parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017"));
         try {
-            return new MongoClient(
-                    parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
-                    parseAuthentication(properties.getProperty("mongodb.auth")),
-                    options
-            );
+            final MongoCredential credit = parseAuthentication(properties.getProperty("mongodb.auth"));
+            if(servers.size()==1){
+                return new MongoClient(servers.get(0),credit,options);
+            }else {
+                return new MongoClient(
+                        servers,
+                        credit,
+                        options
+                );
+            }
         } catch (Exception ex) {
-            return new MongoClient(
-                    parseServerAddresses(properties.getProperty("mongodb.servers", "localhost:27017")),
-                    options
-            );
+            if(servers.size()==1){
+                return new MongoClient(servers.get(0),options);
+            }else {
+                return new MongoClient(
+                        servers,
+                        options
+                );
+            }
         }
     }
 

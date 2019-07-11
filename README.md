@@ -32,6 +32,29 @@ tail -f /var/log/nginx/access.log|grep xxxxxFUCKxxxx
     - 可水平拓展
     - 可路由（日志转发）
 
+# Docker Compose Quick Start
+
+```yaml
+version: "2.1"
+services:
+  lofka:
+    image: tsingjyujing/lofka-lite
+    restart: "always"
+    ports:
+      - "9500:9500"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:4-xenial
+    restart: "always"
+    healthcheck:
+      test: "echo 'db.stats().ok' | mongo 127.0.0.1:27017/leanote --quiet"
+    volumes:
+      - "~/app/lofka/data:/data/db"
+    mem_limit: 800M
+```
+
 # TODO
 
 - Docker 支持

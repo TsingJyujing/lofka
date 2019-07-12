@@ -105,7 +105,7 @@ public abstract class BaseAsyncProcessor<DataType> {
         bufferLock.lock();
         try {
             bufferCopy = dataBuffer;
-            dataBuffer = Lists.newArrayList(dataBuffer);
+            dataBuffer = Lists.newArrayList();
         } finally {
             bufferLock.unlock();
         }

@@ -4,6 +4,7 @@ import com.github.tsingjyujing.lofka.persistence.basic.IBatchLoggerProcessor;
 import com.github.tsingjyujing.lofka.persistence.basic.ILogReceiver;
 import com.github.tsingjyujing.lofka.persistence.source.KafkaMultiPersistence;
 import com.github.tsingjyujing.lofka.persistence.source.LocalWriterQueue;
+import com.github.tsingjyujing.lofka.persistence.writers.ElasticSearchWriter;
 import com.github.tsingjyujing.lofka.persistence.writers.LocalFileWriter;
 import com.github.tsingjyujing.lofka.persistence.writers.MongoDBWriter;
 import com.github.tsingjyujing.lofka.util.FileUtil;
@@ -43,6 +44,8 @@ public class ConfigLoader {
         switch (processorInfo.getProcessorType().toLowerCase()) {
             case "mongodb":
                 return new MongoDBWriter(processorInfo.getProperties());
+            case "elasticsearch":
+                return new ElasticSearchWriter(processorInfo.getProperties());
             case "file":
                 return new LocalFileWriter(processorInfo.getProperties());
                 // 可以在这里继续增加相应的持久化工厂方法

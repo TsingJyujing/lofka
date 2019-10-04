@@ -21,6 +21,24 @@
           "mongodb.expired.setting.WARN": "2678400000",
           "mongodb.servers": "127.0.0.1:27017"
         }
+      },
+      "es-saver-0": {
+        "processorType": "elasticsearch",
+        "config": {
+          "es.naming.index": "lofka-test",
+          "es.deprecate.time": "3600000",
+          "es.expired.setting.DEBUG": "600000",
+          "es.expired.setting.DEFAULT": "2678400000",
+          "es.expired.setting.ERROR": "31622400000",
+          "es.expired.setting.FATAL": "63244800000",
+          "es.expired.setting.INFO": "86400000",
+          "es.expired.setting.NGINX": "16416000000",
+          "es.expired.setting.TRACE": "300000",
+          "es.expired.setting.WARN": "2678400000",
+          "es.servers": "https://test-api-lfkml.line-ves-dev.com:12000",
+          "es.auth.user": "user_xxx",
+          "es.auth.password": "*******"
+        }
       }
     }
   }

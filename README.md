@@ -57,12 +57,8 @@ services:
 
 # TODO
 
-- Docker 支持
-- HTTPS  支持
 - Web查询历史日志
 - Go/C++/Rust 等语言日志收集
-- 持久化到 ElasticSearch
-    - Kibana 数据分析
 - 智能异常发现
     - 日志段正常、异常标记工具
     - 日志数据训练工具

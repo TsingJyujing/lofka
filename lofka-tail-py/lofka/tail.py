@@ -219,7 +219,8 @@ class NginxLogProcessor(LogProcessor):
                 return_data["timestamp"] = unix_timestamp * 1000
             elif "time_iso8601" in message:
                 return_data["timestamp"] = time.mktime(
-                    datetime.datetime.strptime(message["time_iso8601"][:-6], "%Y-%m-%dT%H:%M:%S").timetuple()
+                    datetime.datetime.strptime(
+                        message["time_iso8601"][:-6], "%Y-%m-%dT%H:%M:%S").timetuple()
                 ) * 1000.0
             # format the _time field, they're all described with float (and in format of seconds)
             for k, v in message.items():
@@ -230,13 +231,16 @@ class NginxLogProcessor(LogProcessor):
                         pass
 
             # Fields should convert to int
-            message = NginxLogProcessor.integer_convert(message, NginxLogProcessor.integer_fields)
+            message = NginxLogProcessor.integer_convert(
+                message, NginxLogProcessor.integer_fields)
 
             if "request_uri" in message:
-                message["request_uri"] = NginxLogProcessor.decode_uri(message["request_uri"])
+                message["request_uri"] = NginxLogProcessor.decode_uri(
+                    message["request_uri"])
 
             if "args" in message:
-                message["args"] = NginxLogProcessor.decode_args(message["args"])
+                message["args"] = NginxLogProcessor.decode_args(
+                    message["args"])
         except:
             print("Error while processing nginx log:")
             print(traceback.format_exc())
@@ -342,9 +346,11 @@ def main():
     report_address = arg_map.query("target")
     file_name = arg_map.query("file")
     delta_time = float(arg_map.query_default("period", "1.0"))
-    expired_delta_mills = float(arg_map.query_default("expired", "180.0")) * 24 * 60 * 60 * 1000
+    expired_delta_mills = float(arg_map.query_default(
+        "expired", "180.0")) * 24 * 60 * 60 * 1000
     app_name = arg_map.query_default("app_name", "lofka_tail")
-    processors = [log_processor_factory(x) for x in arg_map.query_default("type", "common").split(",")]
+    processors = [log_processor_factory(
+        x) for x in arg_map.query_default("type", "common").split(",")]
     try:
         append_file = arg_map.query("append")
         with open(append_file, "rb") as fp:
@@ -365,7 +371,8 @@ def main():
                 data_map["timestamp"] = time.time() * 1000
                 for k, v in processor_unit.process_text(line_text).items():
                     data_map[k] = v
-                data_map["expired_time"] = data_map["timestamp"] + expired_delta_mills
+                data_map["expired_time"] = data_map["timestamp"] + \
+                    expired_delta_mills
                 if message_filter_function(data_map):
                     if use_console:
                         print(report_address)
@@ -380,7 +387,7 @@ def main():
     tail_file.follow(delta_time)
 
 
-if __name__ == "__main__":
+def entry():
     print(banner)
     while True:
         try:
@@ -392,3 +399,7 @@ if __name__ == "__main__":
         except Exception as ex:
             print(traceback.format_exc())
             print(help_doc)
+
+
+if __name__ == "__main__":
+    entry()

@@ -35,6 +35,6 @@ Lofka.Dotnet.Log4net 是lofka 的log4net Appender的实现。</Description>
       </PackageReference>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 </Project>
